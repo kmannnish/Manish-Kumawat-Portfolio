@@ -1,0 +1,30 @@
+import 'server-only'
+
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+
+/**
+ * Privileged Supabase client. Bypasses RLS entirely.
+ *
+ * The `server-only` import above is load-bearing: it makes law #3 a build
+ * error rather than a convention. Any 'use client' file that imports this
+ * module — directly or through a chain — fails the build instead of shipping
+ * the service role key to the browser.
+ *
+ * Only two callers are planned: app/api/contact/route.ts (S8) and admin
+ * mutations (S11+). Never reach for this when server.ts would do; using the
+ * service role where the anon client works silently discards RLS.
+ *
+ * S2 adds the generic: createSupabaseClient<Database>(...)
+ */
+export function createAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  )
+}

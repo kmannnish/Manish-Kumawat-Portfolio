@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Design tokens — docs/02-design-direction.md §2.
+
+   Declared once, here. Tailwind v4 emits both the CSS custom property and the
+   matching utility from each entry, so `--color-rule-strong` gives you
+   var(--color-rule-strong) for the trace chart's SVG axis AND `text-ink` /
+   `bg-paper` in JSX. One source of truth, no config file to drift from.
+
+   CLAUDE.md: use these, never raw hex.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Colour. Exact hexes — every ratio in the docs/02 §2 table is computed
+     against --paper #EAEFE9, and --rule-strong clears 3:1 by only 0.21, so
+     changing paper invalidates the whole table. Don't darken it. */
+  --color-paper: #eaefe9;
+  --color-ink: #111a16;
+  --color-graphite: #596159; /* never inside a dimmable row — 2.97:1 at 70% */
+  --color-rule: #d5d9d0; /* DECORATIVE hairlines only — 1.23:1 */
+  --color-rule-strong: #7f867d; /* load-bearing: chart axis, gridlines — 3.21:1 */
+  --color-signal: #2743e8; /* all interactive state */
+  --color-mark: #c8156b; /* exactly three uses — docs/02 §2 */
+
+  /* Families. These vars are set by next/font in app/layout.tsx.
+     No third family and no monospace: data uses `tabular-nums` on the
+     display face, not a mono costume. */
+  --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-prose: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  /* Type. Perfect fourth (1.333), fluid via clamp(). The clamp FLOOR is the
+     load-bearing number, not the preferred value — verify at 390px, not just
+     on a wide monitor (docs/02 §2). */
+  --text-display: clamp(2.75rem, 6vw, 5.25rem);
+  --text-display--font-weight: 500;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--line-height: 0.98;
+
+  --text-h2: clamp(1.75rem, 3vw, 2.5rem);
+  --text-h2--font-weight: 500;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--line-height: 1.1;
+
+  --text-h3: 1.3125rem;
+  --text-h3--font-weight: 500;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--line-height: 1.25;
+
+  --text-body: 1.125rem; /* Newsreader */
+  --text-body--line-height: 1.65;
+
+  --text-small: 0.9375rem;
+
+  --text-data: 0.875rem; /* pair with `tabular-nums` */
+
+  /* Reading measure. Overrides Tailwind's built-in 65ch so that `max-w-prose`
+     is the 68ch cap docs/02 §2 specifies. */
+  --container-prose: 68ch;
+}
+
+/* Optional hardening, once S1's build is verified green: adding
+     --color-*: initial;
+     --text-*: initial;
+   to the block above clears Tailwind's default palette and size scale, which
+   turns `bg-slate-800` and `text-7xl` into build errors rather than review
+   findings. Left off for now because the namespace reset also removes the
+   defaults that Preflight's --default-ring-color and friends resolve against,
+   and that is not a change to make on a scaffold that has not yet compiled.
+   Resetting --font-* is the same trade against --default-font-family. */
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+
+    /* `auto` is already the CSS initial value, so this is a guard and a note
+       rather than a fix: any rule that later sets font-variation-settings
+       would silently disable optical sizing, and Newsreader's opsz axis is
+       the only reason that face was chosen (docs/02 §2). */
+    font-optical-sizing: auto;
+  }
+}
