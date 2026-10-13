@@ -4,14 +4,28 @@
    Design tokens — docs/02-design-direction.md §2.
 
    Declared once, here. Tailwind v4 emits both the CSS custom property and the
-   matching utility from each entry, so `--color-rule-strong` gives you
-   var(--color-rule-strong) for the trace chart's SVG axis AND `text-ink` /
-   `bg-paper` in JSX. One source of truth, no config file to drift from.
+   matching utility from each entry, so a token gives you the raw var() for the
+   trace chart's SVG axis AND `text-ink` / `bg-paper` in JSX. One source of
+   truth, no config file to drift from.
+
+   `static` is load-bearing, not decoration. A plain `@theme` emits only the
+   variables Tailwind observes being used, and "used" means a utility candidate
+   its scanner recognised. An SVG attribute like stroke="var(--color-signal)"
+   is not a candidate, so the variable silently fails to resolve and the axis
+   draws with no stroke. `static` emits all of these unconditionally. It only
+   applies to this block — Tailwind's own defaults stay on-demand, so this does
+   not drag the full default palette into the bundle.
+
+   Measured on the first green build, before this change: of the seven colours
+   only paper, ink, rule and rule-strong reached the CSS, and not one --text-*
+   step or --container-prose did. rule/rule-strong survived because the scanner
+   matched the words in a comment, which is exactly the kind of accident this
+   avoids depending on.
 
    CLAUDE.md: use these, never raw hex.
    ────────────────────────────────────────────────────────────────────────── */
 
-@theme {
+@theme static {
   /* Colour. Exact hexes — every ratio in the docs/02 §2 table is computed
      against --paper #EAEFE9, and --rule-strong clears 3:1 by only 0.21, so
      changing paper invalidates the whole table. Don't darken it. */
@@ -59,15 +73,18 @@
   --container-prose: 68ch;
 }
 
-/* Optional hardening, once S1's build is verified green: adding
+/* Optional hardening, still deliberately off. Adding
      --color-*: initial;
      --text-*: initial;
    to the block above clears Tailwind's default palette and size scale, which
    turns `bg-slate-800` and `text-7xl` into build errors rather than review
-   findings. Left off for now because the namespace reset also removes the
-   defaults that Preflight's --default-ring-color and friends resolve against,
-   and that is not a change to make on a scaffold that has not yet compiled.
-   Resetting --font-* is the same trade against --default-font-family. */
+   findings — attractive, given CLAUDE.md's "use these, never raw hex".
+
+   The cost: a namespace reset also removes the defaults Preflight resolves
+   --default-ring-color and --default-font-family against, so `ring` and the
+   base font-family stop behaving. Resetting --font-* has the same problem.
+   Worth revisiting in S4 when the first real components exist to test against;
+   doing it here would mean debugging Preflight with no UI to observe. */
 
 @layer base {
   body {
