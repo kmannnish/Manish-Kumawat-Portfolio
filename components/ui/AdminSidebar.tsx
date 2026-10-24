@@ -6,8 +6,9 @@ import { createClient } from '@/lib/supabase/client'
 
 const ADMIN_NAV = [
   { label: 'Overview', href: '/admin' },
+  { label: 'Site Settings', href: '/admin/settings' },
   { label: 'Copy & Content', href: '/admin/copy' },
-  { label: 'Sections', href: '/admin/sections' },
+  { label: 'Sections & Nav', href: '/admin/sections' },
   { label: 'Projects', href: '/admin/projects' },
   { label: 'Experience', href: '/admin/experience' },
   { label: 'Media & Files', href: '/admin/media' },
