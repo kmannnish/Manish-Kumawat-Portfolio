@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getPublishedProjects, getCopyMap, getDesignMedia, getSiteSettings } from '@/lib/queries'
 import { t } from '@/lib/copy'
+import { MorphDotsToText } from '@/components/ui/MorphDotsToText'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,6 +57,12 @@ export default async function DesignPage() {
           {subtitle}
         </p>
       </header>
+
+      {/* Morphing Dots to Text Banner */}
+      <MorphDotsToText
+        words={['DESIGN', 'SYSTEMS', 'CRAFT', 'AI & ART']}
+        height={200}
+      />
 
       {/* Design Projects Grid */}
       <section aria-label="Design Projects" className="space-y-6">
