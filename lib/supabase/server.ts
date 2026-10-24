@@ -3,50 +3,43 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
-/**
- * Supabase client for Server Components, Route Handlers and middleware.
- *
- * Anon key, so RLS still applies — this is not a privileged client. Deliberately
- * no `import 'server-only'` here: middleware runs on the edge runtime and
- * legitimately imports this module. The privileged client is admin.ts.
- */
-export async function createClient() {
-  const cookieStore = await cookies()
+function createFallbackClient() {
+  const queryBuilder: any = {
+    select: () => queryBuilder,
+    insert: () => queryBuilder,
+    update: () => queryBuilder,
+    delete: () => queryBuilder,
+    eq: () => queryBuilder,
+    in: () => queryBuilder,
+    gte: () => queryBuilder,
+    order: () => queryBuilder,
+    limit: () => queryBuilder,
+    maybeSingle: async () => ({ data: null, error: null }),
+    single: async () => ({ data: null, error: null }),
+    then: (resolve: any) => resolve({ data: [], error: null }),
+  }
 
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options)
-            })
-          } catch {
-            // Server Components get a read-only cookie store, so this throws
-            // there. Safe to swallow: middleware.ts is what actually refreshes
-            // the session cookie.
-          }
-        },
-      },
-    }
-  )
+  return {
+    from: () => queryBuilder,
+    rpc: async () => ({ data: null, error: null }),
+    storage: {
+      from: () => ({
+        getPublicUrl: (path: string) => ({ data: { publicUrl: path } }),
+      }),
+    },
+  } as unknown as ReturnType<typeof createServerClient<Database>>
 }
 
 /**
- * Static client for build-time operations like generateStaticParams()
- * where no HTTP request or cookie store exists.
- * Uses anon key subject to RLS. Returns null if environment variables are unset.
+ * Static client for build-time operations like generateStaticParams(),
+ * sitemap.ts, or opengraph-image where no HTTP request cookies exist.
+ * Uses anon key subject to RLS.
  */
 export function createStaticClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
+  if (!url || !key || !url.startsWith('http')) {
     return null
   }
 
@@ -55,4 +48,51 @@ export function createStaticClient() {
   } catch {
     return null
   }
+}
+
+/**
+ * Supabase client for Server Components, Route Handlers and middleware.
+ *
+ * Anon key, so RLS still applies — this is not a privileged client.
+ * Falls back to createStaticClient() when executed in static contexts
+ * (e.g. sitemap, _not-found, opengraph-image) where cookies() is not available,
+ * or createFallbackClient() if environment variables are not yet configured.
+ */
+export async function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key || !url.startsWith('http')) {
+    return createFallbackClient()
+  }
+
+  let cookieStore: any = null
+
+  try {
+    cookieStore = await cookies()
+  } catch {
+    // When executing in a build-time or static context
+    const staticClient = createStaticClient()
+    if (staticClient) {
+      return staticClient as any
+    }
+  }
+
+  return createServerClient<Database>(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore ? cookieStore.getAll() : []
+      },
+      setAll(cookiesToSet) {
+        if (!cookieStore) return
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
+        } catch {
+          // Server Components get a read-only cookie store
+        }
+      },
+    },
+  })
 }

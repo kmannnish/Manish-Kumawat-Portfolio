@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -17,6 +18,35 @@ export async function generateStaticParams() {
 
 interface PageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const project = await getProjectBySlug(slug)
+
+  if (!project) {
+    return {
+      title: 'Project Not Found',
+    }
+  }
+
+  const title = project.seo_title || project.title
+  const description = project.seo_description || project.summary
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  }
 }
 
 function getYearRange(startedOn: string, endedOn: string | null): string {

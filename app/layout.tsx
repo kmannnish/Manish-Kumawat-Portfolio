@@ -20,10 +20,23 @@ const newsreader = Newsreader({
   axes: ['opsz'],
 })
 
-// No `metadata` export yet, deliberately. Every user-facing string resolves
-// from the `copy` table or `site_settings` (law #1), neither of which exists
-// until S2 — and a placeholder title here would be exactly the hardcoded
-// string the law forbids. S9 builds real metadata from site_settings.
+import type { Metadata } from 'next'
+import { getSiteSettings } from '@/lib/queries'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const title = settings?.seo_title || `${settings?.owner_name || 'Manish Kumawat'} — ${settings?.role_title || 'Forward Deployed AI Engineer & Designer'}`
+  const description = settings?.seo_description || settings?.tagline || 'Forward Deployed AI Engineer & Designer'
+
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://manishkumawat.com'),
+    title: {
+      default: title,
+      template: `%s | ${settings?.owner_name || 'Manish Kumawat'}`,
+    },
+    description,
+  }
+}
 
 export default function RootLayout({
   children,

@@ -36,7 +36,7 @@ export const getTechByCategory = cache(async (): Promise<TechGroup[]> => {
       return []
     }
 
-    const items = data || []
+    const items: TechItem[] = (data as TechItem[]) || []
     const categoryOrder: Array<TechItem['category']> = [
       'model',
       'language',
@@ -50,7 +50,7 @@ export const getTechByCategory = cache(async (): Promise<TechGroup[]> => {
     const groups: TechGroup[] = []
 
     for (const cat of categoryOrder) {
-      const catItems = items.filter((i) => i.category === cat)
+      const catItems = items.filter((i: TechItem) => i.category === cat)
       if (catItems.length > 0) {
         groups.push({
           category: cat,
