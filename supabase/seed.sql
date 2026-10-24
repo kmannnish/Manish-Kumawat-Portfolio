@@ -243,7 +243,53 @@ Key outcomes:
   '[{"label":"Live Portal","url":"https://sampark-mds.vercel.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/bapsjaipur/sampark-mds","kind":"github"}]'
 );
 
--- Project 2: Engineering project (show_in_design_section = false)
+-- Project 2: Featured project (Padharo House)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'padharo-house',
+  'Padharo House — Luxury Heritage Homestay & Booking Engine',
+  'End-to-end digital experience and host operations system for an exclusive single-suite luxury heritage retreat opposite the Amber Fort in Jaipur. Features an interactive availability engine and full back-office host console.',
+  '## Background & Context
+Padharo House is an exclusive boutique homestay nestled directly opposite the Amber (Amer) Fort in Jaipur. Offering a private heritage suite with panoramic rampart views, the property required a brand identity, direct-booking web application, and full-featured host management console.
+
+## Key Features & Architecture
+- **Marketing & Suite Showcase:** Immersive heritage visual identity featuring typography in Playfair Display and Inter, reflecting Rajasthani royal aesthetics.
+- **Direct Reservation Engine:** 3-step booking stepper with dual-month availability calendar, automatic mattress surcharge calculation, and direct WhatsApp reservation generation.
+- **Host Back-Office Console (/admin):**
+  - KPI occupancy dashboard (Upcoming stays, Staying now, Balance due, Revenue collected).
+  - Manual calendar date-blocking for offline bookings and maintenance with live sync.
+  - WhatsApp communication queue with pre-saved message templates for check-in guides, directions, and payment follow-ups.
+  - Dynamic tariff rules engine for weekend pricing, festival surcharges, and seasonal discount templates.
+  - Production website mode switcher (Opening Soon vs Full Live Site).',
+  'Product Engineer & Lead Designer',
+  '2024-09-01',
+  null,
+  'published',
+  true,
+  true,
+  1,
+  '#A8321C',
+  'Traditional boutique homestays in heritage corridors often rely entirely on high-commission aggregators (18% to 25% take rates) with zero direct branding, disconnected guest communication, and manual spreadsheet reconciliation.
+
+Inquiries arriving through Instagram and phone calls frequently led to calendar synchronization errors, double bookings, and slow response times, diminishing the boutique guest experience.',
+  'Designed and engineered a cohesive direct-booking platform and host management suite:
+- Architected an ultra-fast static guest portal on Cloudflare Pages with responsive Playfair & Inter typography reflecting Rajasthani heritage aesthetics.
+- Developed an interactive live booking engine with date-range availability calculations, guest mattress surcharges, and instant WhatsApp reservation dispatch.
+- Built a comprehensive Host Console (/admin) featuring real-time occupancy KPI cards, manual calendar blocking with Airbnb sync, dynamic seasonal pricing templates, and an automated WhatsApp communication queue with pre-formatted guest templates (arrival guides, map pins, check-in details).
+- Secured multi-role access (Super Admin, Host, Receptionist) with granular permission gates.',
+  'Padharo House launched with a distinctive digital presence and a fully independent direct booking funnel:
+- 100% direct bookings with zero aggregator commission fees.
+- Instant quote generation and frictionless WhatsApp reservation flow.
+- Complete host back-office control over rates, blackout dates, and guest communications.
+- Sub-second page loads across desktop and mobile devices.',
+  '[{"label":"Direct booking fees","before":"18–25% aggregator fee","after":"0% direct booking","unit":"","is_headline":true},{"label":"Proximity to Amber Fort","before":"Amer corridor","after":"50m walk","unit":"","is_headline":false},{"label":"Reservation Flow","before":"Manual messaging","after":"Instant WhatsApp quote & stepper","unit":"","is_headline":false},{"label":"Host Back-Office","before":"Spreadsheets","after":"Unified 10-module console","unit":"","is_headline":false}]',
+  '[{"label":"Live Website","url":"https://padharohouse.in","kind":"live"},{"label":"Host Console","url":"https://padharohouse.in/admin","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/kmannnish/padharohouse","kind":"code"}]'
+);
+
+-- Project 3: Engineering project (show_in_design_section = false)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -259,7 +305,7 @@ insert into projects (
   'published',
   true,
   false,
-  1,
+  2,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -267,7 +313,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/logistics-agent","kind":"code"}]'
 );
 
--- Project 3: Engineering + design (show_in_design_section = true)
+-- Project 4: Engineering + design (show_in_design_section = true)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -283,7 +329,7 @@ insert into projects (
   'published',
   true,
   true,
-  2,
+  3,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -291,7 +337,7 @@ insert into projects (
   '[{"label":"Live tool","url":"https://example.com/mockup","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/mockup-gen","kind":"code"}]'
 );
 
--- Project 4: Engineering project
+-- Project 5: Engineering project
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -307,7 +353,7 @@ insert into projects (
   'published',
   false,
   false,
-  3,
+  4,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -315,7 +361,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/content-pipeline","kind":"code"}]'
 );
 
--- Project 5: Engineering + design
+-- Project 6: Engineering + design
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -331,7 +377,7 @@ insert into projects (
   'published',
   false,
   true,
-  4,
+  5,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',

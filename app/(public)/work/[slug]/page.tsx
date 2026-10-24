@@ -8,6 +8,7 @@ import {
   getCopyMap,
 } from '@/lib/queries'
 import { t } from '@/lib/copy'
+import { ProjectGallery } from '@/components/work/ProjectGallery'
 
 export const dynamicParams = true
 
@@ -252,37 +253,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
       {/* Media Gallery from project_media */}
       {project.media && project.media.length > 0 && (
-        <section aria-label="Project media gallery" className="mt-16 pt-10 border-t border-rule max-w-4xl">
-          <div className="space-y-10">
-            {project.media.map(({ media }, index) => {
-              const imageSrc = media.path.startsWith('http')
-                ? media.path
-                : `${supabaseUrl}/storage/v1/object/public/${media.bucket}/${media.path}`
-
-              return (
-                <figure key={media.id || index} className="space-y-2">
-                  <div className="relative overflow-hidden rounded-xs border border-rule bg-rule/30">
-                    <Image
-                      src={imageSrc}
-                      alt={media.alt_text || project.title}
-                      width={media.width || 1200}
-                      height={media.height || 800}
-                      placeholder={media.placeholder ? 'blur' : 'empty'}
-                      blurDataURL={media.placeholder || undefined}
-                      className="w-full h-auto object-cover"
-                      unoptimized={!supabaseUrl}
-                    />
-                  </div>
-                  {media.caption && (
-                    <figcaption className="text-xs text-graphite font-display max-w-prose">
-                      {media.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              )
-            })}
-          </div>
-        </section>
+        <ProjectGallery
+          media={project.media.map(({ media, role, sort_order }) => ({
+            id: media.id,
+            url: media.path.startsWith('http')
+              ? media.path
+              : `${supabaseUrl}/storage/v1/object/public/${media.bucket}/${media.path}`,
+            alt: media.alt_text || project.title,
+            caption: media.caption,
+            width: media.width,
+            height: media.height,
+            placeholder: media.placeholder,
+            role,
+            sort_order: sort_order || 0,
+          }))}
+          projectTitle={project.title}
+          projectUrl={linksList.find((l: any) => l.kind === 'live')?.url || ''}
+        />
       )}
     </article>
   )
