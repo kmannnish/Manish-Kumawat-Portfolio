@@ -46,3 +46,7 @@ Thumbs.db
 # 71 MB of someone else's markup, kept for reading only — see docs/01-reference-teardown.md.
 # This is ~99.8% of the repo's current size. Never commit it.
 docs/references/
+
+# Scratch & temporary scripts
+scratch/
+

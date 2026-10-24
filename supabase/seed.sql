@@ -130,7 +130,10 @@ insert into tech (name, slug, category, proficiency, is_featured, sort_order) va
   ('After Effects',   'after-effects',    'design',     4, true, 16),
   ('Premiere Pro',    'premiere-pro',     'design',     4, true, 17),
   ('Docker',          'docker',           'infra',      3, false,18),
-  ('Git',             'git',              'tooling',    5, false,19);
+  ('Git',             'git',              'tooling',    5, false,19),
+  ('Firebase',        'firebase',         'infra',      5, true, 20),
+  ('Firestore',       'firestore',        'infra',      5, true, 21),
+  ('Vite',            'vite',             'tooling',    5, false,22);
 
 -- ── experience ───────────────────────────────────────────────────────────────
 -- Overlapping start dates so the trace chart has something to render.
@@ -173,10 +176,74 @@ insert into experience (organization, role, location, employment_type, started_o
   );
 
 -- ── projects ────────────────────────────────────────────────────────────────
--- All four must have metrics with exactly one is_headline: true.
+-- All must have metrics with exactly one is_headline: true.
 -- `show_in_design_section` is true when the project also produced design assets.
 
--- Project 1: Engineering project (show_in_design_section = false)
+-- Project 1: Featured flagship project (BAPS Jaipur MDS)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'baps-jaipur-mds',
+  'BAPS Jaipur MDS — Sampark & Mandir Data System',
+  'A multi-tenant congregation outreach and volunteer dispatch platform managing directory data, calling batches, and sabha attendance across thousands of households with zero-cost Firebase architecture.',
+  '## Background & Context
+BAPS Swaminarayan Sanstha, Jaipur operates large-scale congregation outreach (*sampark*) and volunteer (*karyakarta*) coordination across numerous regional zones. Managing thousands of families, active calling campaigns, weekly sabha attendance, children''s programs (*Bal Mandal*), and dignitary visit itineraries (*santo padhramani*) required an enterprise line-of-business software system capable of operating smoothly in volunteer hands.
+
+## Key Engineering Highlights
+
+### 1. Zero-Cost Firebase Architecture
+Targeting the Firebase Blaze plan while maintaining zero operational cost required strict algorithmic data design:
+- **No permanent listeners:** Admin screens fetch on-demand rather than holding continuous listeners on thousands of documents.
+- **Persistent IndexedDB Cache:** Configured multi-tab persistent cache in the browser so repeat page visits cost single-digit network reads.
+- **Chunked ID Queries:** Batch queries are batched in fixed 30-item `documentId() in [...]` chunks, preventing collection-wide scan costs.
+- **Read/Write Metering:** Integrated an in-app telemetry monitor (`fsMetered.js`) in the admin console to track daily read consumption against the 50,000 free quota.
+
+### 2. Volunteer Calling & Batching Flow
+- **Automated Partitioning:** Calling pools are split into configurable batch sizes (e.g. 20 contacts) and auto-assigned evenly across available volunteers based on active workload.
+- **State Machine & Recycling:** Real-time tracking of call outcomes (*Interested*, *Not Interested*, *No Answer*). Exhausted contacts can be recycled into fresh rounds without overwriting call history notes.
+- **WhatsApp Integration:** Instant contextual `wa.me` deep-linking formatted with personalized message templates.
+
+### 3. Dynamic Area & Mandal-Scoped RBAC
+- Multi-tier hierarchy: `Admin User → Santo → Nirdeshak → Sanchalak → Nirikshak → Sampark Karyakar`.
+- Granular permissions (29 discrete capability flags) combined with geographic scope (*All Jaipur*, *Assigned Areas*, or *Assigned Mandals*).
+- One-click hierarchy cloner to stamp out complete permission sets whenever a new mandal is established.
+
+### 4. Automated Reporting & Document Engine
+- **Serverless Automation:** Firebase Cloud Functions (Gen 2, Node.js 22) deliver daily 5 AM IST summaries, volunteer birthday alerts, and post-sabha attendance metrics.
+- **Dynamic Client PDF & Excel:** In-browser PDF generation using `jsPDF` and `jspdf-autotable` along with Excel export via SheetJS for offline record-keeping and meeting agendas.',
+  'Lead Full-Stack Engineer & Architect',
+  '2024-06-01',
+  null,
+  'published',
+  true,
+  false,
+  0,
+  '#B45309',
+  'Outreach across thousands of households in Jaipur was previously fragmented across paper registries, uncoordinated WhatsApp groups, and ad-hoc spreadsheets.
+
+Volunteer coordinators had no unified real-time visibility into calling progress, attendance trends across mandals, or family records. Critical volunteer handovers frequently caused data loss, duplicate outreach calls, and unmonitored drop-offs in congregation engagement.',
+  'Architected a high-performance responsive web platform on React 18 and Vite, backed by Firebase (Firestore, Cloud Functions Gen 2, Auth, and Storage).
+
+To eliminate infrastructure costs for the non-profit organization while managing thousands of live records, I engineered a zero-cost Firebase architecture:
+- Implemented client-side IndexedDB persistent caching so repeat loads cost zero network reads.
+- Restricted administrative queries to 30-document chunking via documentId() pagination.
+- Designed a custom read/write metering layer (fsMetered.js) to monitor query usage.
+- Built a multi-tier dynamic RBAC matrix enabling area- and mandal-scoped permissions with one-click hierarchy cloning.
+- Automated daily 5 AM IST executive reports, birthday reminders, and post-sabha summaries via serverless Cloud Functions and dynamic PDF generation.',
+  'The system is live in active production across 15+ mandal divisions in Jaipur, coordinating thousands of households with zero cloud hosting expenses.
+
+Key outcomes:
+- Over 3,950 congregation contacts centralized and searchable under unified household entities.
+- Calling campaign cycle time cut by 70% with automated round-robin volunteer batch assignment.
+- Firestore usage maintained strictly within Blaze free tier quotas (≈50,000 daily reads).
+- Automated reporting eliminated hours of manual spreadsheet compilation every week.',
+  '[{"label":"Daily quota ceiling","before":"Unmonitored","after":"50,000 reads inside free tier","unit":"","is_headline":true},{"label":"Households & Contacts","before":"Paper / Sheets","after":"3,950+","unit":"records","is_headline":false},{"label":"Mandal Divisions","before":"Siloed","after":"15+","unit":"teams coordinated","is_headline":false},{"label":"Cloud Function Invocations","before":"High frequency","after":"95% reduction","unit":"via optimized triggers","is_headline":false}]',
+  '[{"label":"Live Portal","url":"https://sampark-mds.vercel.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/bapsjaipur/sampark-mds","kind":"github"}]'
+);
+
+-- Project 2: Engineering project (show_in_design_section = false)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -192,7 +259,7 @@ insert into projects (
   'published',
   true,
   false,
-  0,
+  1,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -200,7 +267,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/logistics-agent","kind":"code"}]'
 );
 
--- Project 2: Engineering + design (show_in_design_section = true)
+-- Project 3: Engineering + design (show_in_design_section = true)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -216,7 +283,7 @@ insert into projects (
   'published',
   true,
   true,
-  1,
+  2,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -224,7 +291,7 @@ insert into projects (
   '[{"label":"Live tool","url":"https://example.com/mockup","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/mockup-gen","kind":"code"}]'
 );
 
--- Project 3: Engineering project
+-- Project 4: Engineering project
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -240,7 +307,7 @@ insert into projects (
   'published',
   false,
   false,
-  2,
+  3,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -248,7 +315,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/content-pipeline","kind":"code"}]'
 );
 
--- Project 4: Engineering + design
+-- Project 5: Engineering + design
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -264,13 +331,14 @@ insert into projects (
   'published',
   false,
   true,
-  3,
+  4,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',
   '[{"label":"production time","before":"2880","after":"240","unit":"min","is_headline":true},{"label":"events using system","before":"0","after":"15","unit":"events","is_headline":false},{"label":"templates","before":"0","after":"48","unit":"components","is_headline":false}]',
   '[{"label":"Design case study","url":"https://example.com/stage-design","kind":"live"}]'
 );
+
 
 -- ── project_tech ─────────────────────────────────────────────────────────────
 -- Map tech slugs to project slugs. Tech IDs must match real inserts above.
