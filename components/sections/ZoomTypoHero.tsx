@@ -20,6 +20,7 @@ const PORTRAITS = [
     tag: '01 // ARCHITECT',
     role: 'Forward Deployed AI Lead',
     quote: 'Moving into complex stacks to ship measurable production AI.',
+    objectPosition: 'center 22%',
   },
   {
     id: 'designer',
@@ -29,6 +30,7 @@ const PORTRAITS = [
     tag: '02 // DESIGNER',
     role: 'High-Craft Interface Director',
     quote: 'Bridging engineering precision with memorable aesthetic craft.',
+    objectPosition: 'center 28%',
   },
   {
     id: 'builder',
@@ -38,6 +40,7 @@ const PORTRAITS = [
     tag: '03 // BUILDER',
     role: 'Full-Stack & Systems Engineer',
     quote: 'Deep in the codebase: architecture, pipelines, and performance.',
+    objectPosition: 'center 35%',
   },
   {
     id: 'leader',
@@ -47,6 +50,7 @@ const PORTRAITS = [
     tag: '04 // LEADER',
     role: 'Partner & Client Strategist',
     quote: 'Zero jargon. Direct communication. Clear business outcomes.',
+    objectPosition: 'center 20%',
   },
 ]
 
@@ -101,7 +105,7 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
   // 90% -> ~24.0 scale (zoomed through into the photo)
   const zoomScale = Math.max(1, 1 + Math.pow(scrollProgress, 2.2) * 26)
   const maskOpacity = Math.max(0, 1 - Math.pow(scrollProgress, 3) * 1.4)
-  const photoScale = 1.15 - scrollProgress * 0.12
+  const photoScale = 1.02 - scrollProgress * 0.04
   const hudRevealOpacity = Math.min(1, Math.max(0, (scrollProgress - 0.45) * 2.2))
 
   const headline = t(
@@ -141,8 +145,9 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
                 alt={`${ownerName} — ${p.title}`}
                 fill
                 priority={idx === 0}
-                className="object-cover object-center sm:object-top"
-                sizes="(max-width: 1200px) 100vw, 1200px"
+                className="object-cover"
+                style={{ objectPosition: p.objectPosition }}
+                sizes="100vw"
               />
               {/* Subtle film grain & gradient shading for high contrast */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-ink/40 pointer-events-none" />
