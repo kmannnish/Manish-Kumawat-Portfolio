@@ -121,8 +121,8 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
       aria-label="Introduction"
       className="relative w-full h-[220vh] select-none"
     >
-      {/* Sticky Viewport Frame */}
-      <div className="sticky top-12 left-0 w-full h-[calc(100vh-3.25rem)] overflow-hidden rounded-xs border border-rule bg-ink text-paper">
+      {/* Sticky Viewport Frame: Full-bleed edge-to-edge */}
+      <div className="sticky top-14 left-0 w-full h-[calc(100vh-3.5rem)] overflow-hidden border-b border-rule bg-ink text-paper">
         {/* ── LAYER 1: BACKGROUND PORTRAIT WITH DYNAMIC LENS SWITCHER ── */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {PORTRAITS.map((p, idx) => (
@@ -232,22 +232,22 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
         </div>
 
         {/* ── LAYER 3: TOP OVERLAY HUD (Fixed within Sticky Frame) ── */}
-        <div className="absolute top-0 left-0 right-0 z-30 p-4 sm:p-6 lg:p-8 flex items-start justify-between pointer-events-auto">
+        <div className="absolute top-0 left-0 right-0 z-30 p-4 sm:p-6 lg:p-8 flex items-start justify-between pointer-events-auto max-w-7xl mx-auto">
           {/* Left: Persona / Role Pill */}
-          <div className="space-y-1 backdrop-blur-md bg-ink/40 border border-white/10 px-3 py-2 rounded-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-signal animate-pulse" />
-              <span className="text-xxs font-mono uppercase tracking-wider text-paper/90">
+          <div className="space-y-0.5 sm:space-y-1 backdrop-blur-md bg-ink/40 border border-white/10 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xs shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-signal animate-pulse" />
+              <span className="text-[10px] sm:text-xxs font-mono uppercase tracking-wider text-paper/90">
                 {activePortrait.tag}
               </span>
             </div>
-            <p className="text-xs font-medium text-paper tracking-tight">
+            <p className="hidden sm:block text-xs font-medium text-paper tracking-tight">
               {activePortrait.role}
             </p>
           </div>
 
           {/* Right: Interactive 4-Photo Lens Switcher */}
-          <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-xs backdrop-blur-md bg-ink/60 border border-white/10">
+          <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-xs backdrop-blur-md bg-ink/60 border border-white/10 shrink-0">
             {PORTRAITS.map((p, idx) => {
               const active = idx === activePhotoIdx
               return (
@@ -255,14 +255,15 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
                   key={p.id}
                   type="button"
                   onClick={() => setActivePhotoIdx(idx)}
-                  className={`px-2 sm:px-2.5 py-1 text-xxs font-mono uppercase tracking-wider rounded-xs transition-all cursor-pointer ${
+                  className={`px-1.5 sm:px-2.5 py-1 text-[10px] sm:text-xxs font-mono uppercase tracking-wider rounded-xs transition-all cursor-pointer ${
                     active
                       ? 'bg-paper text-ink font-bold shadow-xs'
                       : 'text-paper/70 hover:text-paper hover:bg-white/10'
                   }`}
                   title={`Switch view to ${p.title}`}
                 >
-                  {p.title.split(' ')[0]}
+                  <span className="sm:hidden">0{idx + 1}</span>
+                  <span className="hidden sm:inline">{p.title.split(' ')[0]}</span>
                 </button>
               )
             })}
@@ -284,7 +285,7 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
 
         {/* ── LAYER 5: REVEALED IMPACT OVERLAY (Crossfades in as Zoom Completes) ── */}
         <div
-          className="absolute inset-x-0 bottom-0 z-30 p-4 sm:p-6 lg:p-8 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4 pointer-events-auto transition-all"
+          className="absolute inset-x-0 bottom-0 z-30 p-4 sm:p-6 lg:p-8 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4 pointer-events-auto transition-all max-w-7xl mx-auto"
           style={{
             opacity: hudRevealOpacity,
             transform: `translateY(${(1 - hudRevealOpacity) * 20}px)`,

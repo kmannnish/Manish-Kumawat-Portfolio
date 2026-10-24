@@ -89,7 +89,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <article
-      className="py-12 lg:py-16 text-left"
+      className="py-12 lg:py-16 text-left max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
       style={
         {
           '--project-accent': project.accent_color || 'var(--color-signal)',

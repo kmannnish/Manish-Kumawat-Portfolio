@@ -37,7 +37,7 @@ export default async function DesignPage() {
   const designProjects = projects.filter((p) => p.show_in_design_section)
 
   return (
-    <div className="py-12 lg:py-16 text-left max-w-5xl space-y-12">
+    <div className="py-12 lg:py-16 text-left max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       {/* Back navigation */}
       <div>
         <Link

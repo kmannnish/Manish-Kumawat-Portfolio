@@ -15,7 +15,7 @@ export default async function ArchivePage() {
   const backLabel = t(copy, 'project.back', '← All work')
 
   return (
-    <div className="py-12 lg:py-16 text-left max-w-5xl">
+    <div className="py-12 lg:py-16 text-left max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Back navigation */}
       <div className="mb-8">
         <Link

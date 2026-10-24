@@ -137,40 +137,49 @@ export default async function HomePage() {
           },
         ]
 
-  return (
-    <div className="space-y-16 lg:space-y-24">
-      {activeSections.map((section) => {
-        if (!section.is_visible) return null
+  const heroSection = activeSections.find(
+    (s) => s.kind === 'hero' && s.is_visible
+  )
+  const contentSections = activeSections.filter(
+    (s) => s.kind !== 'hero' && s.is_visible
+  )
 
-        switch (section.kind) {
-          case 'hero':
-            return <Hero key={section.id} copy={copy} settings={settings} />
-          case 'trace':
-            return <Trace key={section.id} data={traceData} copy={copy} />
-          case 'work':
-            return <Work key={section.id} projects={projects} copy={copy} />
-          case 'design':
-            return <Design key={section.id} projects={projects} copy={copy} />
-          case 'about':
-            return <About key={section.id} copy={copy} settings={settings} />
-          case 'skills':
-            return <Skills key={section.id} groups={techGroups} copy={copy} />
-          case 'writing':
-            return <Writing key={section.id} posts={posts} copy={copy} />
-          case 'testimonials':
-            return (
-              <Testimonials
-                key={section.id}
-                testimonials={testimonials}
-                copy={copy}
-              />
-            )
-          case 'contact':
-            return <Contact key={section.id} copy={copy} settings={settings} />
-          default:
-            return null
-        }
-      })}
+  return (
+    <div className="w-full">
+      {/* 1. Full-bleed edge-to-edge Hero with Zoom Typography */}
+      {heroSection && <Hero key={heroSection.id} copy={copy} settings={settings} />}
+
+      {/* 2. Seamless Centered Content Sections */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 lg:py-24 space-y-24 lg:space-y-36">
+        {contentSections.map((section) => {
+          switch (section.kind) {
+            case 'trace':
+              return <Trace key={section.id} data={traceData} copy={copy} />
+            case 'work':
+              return <Work key={section.id} projects={projects} copy={copy} />
+            case 'design':
+              return <Design key={section.id} projects={projects} copy={copy} />
+            case 'testimonials':
+              return (
+                <Testimonials
+                  key={section.id}
+                  testimonials={testimonials}
+                  copy={copy}
+                />
+              )
+            case 'about':
+              return <About key={section.id} copy={copy} settings={settings} />
+            case 'skills':
+              return <Skills key={section.id} groups={techGroups} copy={copy} />
+            case 'writing':
+              return <Writing key={section.id} posts={posts} copy={copy} />
+            case 'contact':
+              return <Contact key={section.id} copy={copy} settings={settings} />
+            default:
+              return null
+          }
+        })}
+      </div>
     </div>
   )
 }

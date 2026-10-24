@@ -6,7 +6,6 @@ import {
   getContentLastUpdated,
 } from '@/lib/queries'
 import { TopBar } from '@/components/ui/TopBar'
-import { IndexRail } from '@/components/ui/IndexRail'
 import { Footer } from '@/components/ui/Footer'
 
 export const dynamic = 'force-dynamic'
@@ -89,17 +88,13 @@ export default async function PublicLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* 1. Thin Top Bar with owner name and live 'currently' status */}
-      <TopBar settings={settings} copy={copy} />
+      {/* 1. Sleek top navigation bar */}
+      <TopBar settings={settings} copy={copy} navItems={navItems} />
 
-      {/* 2. Main content area with sticky left index rail */}
-      <div className="mx-auto flex w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8">
-        <IndexRail navItems={navItems} />
-
-        <main id="main-content" tabIndex={-1} className="flex-1 min-w-0 py-8 lg:py-12 lg:pl-10 outline-hidden">
-          {children}
-        </main>
-      </div>
+      {/* 2. Full-screen seamless main content area */}
+      <main id="main-content" tabIndex={-1} className="w-full flex-1 outline-hidden">
+        {children}
+      </main>
 
       {/* 3. Footer with real last-updated timestamp in --mark token */}
       <Footer lastUpdated={lastUpdated} copy={copy} settings={settings} />
