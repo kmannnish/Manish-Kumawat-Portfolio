@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { AdminHeader } from '@/components/ui/AdminHeader'
+import { MediaPicker } from '@/components/admin/MediaPicker'
 import { useToast } from '@/components/ui/Toast'
 import { updateSiteSettings } from '@/app/actions/admin'
 import type { Database } from '@/lib/database.types'
@@ -31,6 +32,7 @@ export default function AdminSettingsPage() {
   const [seoTitle, setSeoTitle] = useState('')
   const [seoDescription, setSeoDescription] = useState('')
   const [resumeDocumentId, setResumeDocumentId] = useState<string>('')
+  const [ogImageId, setOgImageId] = useState<string | null>(null)
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([])
 
   const toast = useToast()
@@ -59,6 +61,7 @@ export default function AdminSettingsPage() {
         setSeoTitle(settings.seo_title || '')
         setSeoDescription(settings.seo_description || '')
         setResumeDocumentId(settings.resume_document_id || '')
+        setOgImageId(settings.og_image_id || null)
 
         if (Array.isArray(settings.social_links)) {
           setSocialLinks(settings.social_links as unknown as SocialLink[])
@@ -117,6 +120,7 @@ export default function AdminSettingsPage() {
       contact_email: contactEmail.trim() || null,
       seo_title: seoTitle.trim() || null,
       seo_description: seoDescription.trim() || null,
+      og_image_id: ogImageId || null,
       resume_document_id: resumeDocumentId || null,
       social_links: socialLinks as any,
     })
@@ -434,6 +438,14 @@ export default function AdminSettingsPage() {
               onChange={(e) => setSeoDescription(e.target.value)}
               className="w-full p-3 text-xs text-ink bg-transparent border border-rule rounded-xs focus:outline-hidden focus:border-signal focus:ring-1 focus:ring-signal transition-colors leading-relaxed"
               placeholder="I solve business problems with AI, code, and design. Live projects across industries..."
+            />
+          </div>
+
+          <div className="pt-2">
+            <MediaPicker
+              value={ogImageId}
+              onChange={setOgImageId}
+              label="OpenGraph Social Share Image (1200 × 630 recommended)"
             />
           </div>
         </section>

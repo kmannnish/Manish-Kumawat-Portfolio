@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { AdminHeader } from '@/components/ui/AdminHeader'
 import { useToast } from '@/components/ui/Toast'
 import { AccentSwatchPicker } from '@/components/ui/AccentSwatchPicker'
+import { MediaPicker } from '@/components/admin/MediaPicker'
 import { upsertProject } from '@/app/actions/admin'
 import type { Database } from '@/lib/database.types'
 
@@ -68,6 +69,9 @@ export function ProjectForm({ initialData, initialTechIds = [] }: ProjectFormPro
   const [isFeatured, setIsFeatured] = useState(initialData?.is_featured ?? true)
   const [showInDesign, setShowInDesign] = useState(
     initialData?.show_in_design_section ?? false
+  )
+  const [coverMediaId, setCoverMediaId] = useState<string | null>(
+    initialData?.cover_media_id || null
   )
 
   // Dates
@@ -228,6 +232,7 @@ export function ProjectForm({ initialData, initialTechIds = [] }: ProjectFormPro
       client_name: clientName.trim() || null,
       role: role.trim() || null,
       accent_color: accentColor,
+      cover_media_id: coverMediaId || null,
       status,
       is_featured: isFeatured,
       show_in_design_section: showInDesign,
@@ -425,6 +430,13 @@ export function ProjectForm({ initialData, initialTechIds = [] }: ProjectFormPro
           value={accentColor}
           onChange={setAccentColor}
           label="Trace Bar Accent Colour *"
+        />
+
+        {/* Cover Media Picker */}
+        <MediaPicker
+          value={coverMediaId}
+          onChange={setCoverMediaId}
+          label="Cover Media / Image"
         />
 
         {/* Timeline */}

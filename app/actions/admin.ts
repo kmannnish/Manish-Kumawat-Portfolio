@@ -230,6 +230,16 @@ export async function upsertProject(
       }
     }
 
+    // 4. Sync cover media into project_media
+    if (savedId && projectData.cover_media_id) {
+      await supabase.from('project_media').upsert({
+        project_id: savedId,
+        media_id: projectData.cover_media_id,
+        role: 'cover',
+        sort_order: 0,
+      })
+    }
+
     revalidatePath('/', 'layout')
     revalidatePath('/archive', 'page')
     if (projectData.slug) {
