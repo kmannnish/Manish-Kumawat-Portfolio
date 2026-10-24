@@ -19,9 +19,17 @@ export function Design({ projects, copy }: DesignProps) {
 
   return (
     <section id="design" aria-label="Design work" className="py-12 lg:py-16 text-left">
-      <h2 className="text-h2 font-medium text-ink tracking-tight mb-2">
-        {title}
-      </h2>
+      <div className="flex items-baseline justify-between mb-2">
+        <h2 className="text-h2 font-medium text-ink tracking-tight">
+          {title}
+        </h2>
+        <Link
+          href="/design"
+          className="text-xs text-graphite hover:text-signal transition-colors font-display"
+        >
+          View all &rarr;
+        </Link>
+      </div>
       <p className="text-graphite text-sm mb-8 font-display">
         Graphic work, print systems & art direction
       </p>

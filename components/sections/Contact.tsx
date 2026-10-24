@@ -53,7 +53,7 @@ export function Contact({ copy, settings }: ContactProps) {
     'Something went wrong. Try again or email directly.'
   )
 
-  const directEmail = settings?.contact_email
+  const directEmail = settings?.contact_email || 'mannnishkumawat@gmail.com'
   const socialLinks = Array.isArray(settings?.social_links)
     ? (settings?.social_links as any[])
     : []
@@ -113,7 +113,14 @@ export function Contact({ copy, settings }: ContactProps) {
           </h2>
           <p className="font-prose text-body text-ink/85 leading-relaxed">
             Have a project in mind or an engineering challenge to solve? Send a
-            message below{directEmail ? ` or reach out directly at ${directEmail}` : ''}.
+            message below or reach out directly at{' '}
+            <a
+              href={`mailto:${directEmail}`}
+              className="text-signal hover:underline font-medium"
+            >
+              {directEmail}
+            </a>
+            .
           </p>
         </div>
 

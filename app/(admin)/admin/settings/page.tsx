@@ -243,7 +243,7 @@ export default function AdminSettingsPage() {
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
                 className="w-full px-3 py-2 text-xs text-ink bg-transparent border border-rule rounded-xs focus:outline-hidden focus:border-signal focus:ring-1 focus:ring-signal transition-colors"
-                placeholder="manish@example.com"
+                placeholder="mannnishkumawat@gmail.com"
               />
             </div>
           </div>

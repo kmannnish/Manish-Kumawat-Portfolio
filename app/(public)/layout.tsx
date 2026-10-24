@@ -102,7 +102,7 @@ export default async function PublicLayout({
       </div>
 
       {/* 3. Footer with real last-updated timestamp in --mark token */}
-      <Footer lastUpdated={lastUpdated} copy={copy} />
+      <Footer lastUpdated={lastUpdated} copy={copy} settings={settings} />
     </div>
   )
 }

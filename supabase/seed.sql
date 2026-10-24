@@ -18,7 +18,7 @@ insert into site_settings (
   'I build tools that solve real problems and design things people remember.',
   'Building AI-powered automation tools and shipping live products for clients',
   'India',
-  'manish@example.com',
+  'mannnishkumawat@gmail.com',
   'Manish Kumawat — Forward Deployed AI Engineer & Designer',
   'I solve business problems with AI, code, and design. Live projects across industries — from logistics to creative tools.',
   '[{"label":"GitHub","url":"https://github.com/manishk","icon":"github"},{"label":"LinkedIn","url":"https://linkedin.com/in/manishk","icon":"linkedin"}]'
@@ -103,7 +103,7 @@ insert into copy (key, value, kind, group_name, label) values
 
   -- Footer
   ('footer.last_updated', 'Last updated', 'text', 'footer', 'Last updated label'),
-  ('footer.built_with',   'Built with Next.js & Supabase', 'text', 'footer', 'Built with'),
+  ('footer.built_with',   '© 2026 Manish Kumawat. All rights reserved.', 'text', 'footer', 'Copyright / Footer line'),
 
   -- About
   ('about.title',   'About',   'text', 'about', 'About section title'),
@@ -369,26 +369,26 @@ where p.slug = 'event-stage-design-system'
 -- ── testimonials ─────────────────────────────────────────────────────────────
 insert into testimonials (author_name, author_role, author_org, quote, is_visible, sort_order) values
   (
-    'Rahul Mehta',
-    'Operations Director',
-    'Logistics firm (name withheld)',
-    'Manish built an agent that runs every morning and has saved our team three hours a day. It just works — we had one brief call and then a finished product two weeks later.',
+    'Lorem Ipsum',
+    'Operations Lead',
+    'Enterprise Logistics',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     true,
     0
   ),
   (
-    'Priya Nair',
-    'Founder',
-    'E-commerce startup',
-    'The mockup generator alone was worth the project. We went from spending days on product photography to having a tool that does it in minutes. The design sensibility throughout was exactly what we needed.',
+    'Dolor Sit Amet',
+    'Founder & Director',
+    'Retail Systems',
+    'Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.',
     true,
     1
   ),
   (
-    'Amit Shah',
+    'Consectetur Elit',
     'Creative Director',
-    'Event management company',
-    'The stage design system transformed how we work. What used to take three days now takes four hours, and the quality is consistently higher. Manish understood the brief perfectly.',
+    'Design Studio',
+    'Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor.',
     true,
     2
   );
