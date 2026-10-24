@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 
 /**
  * Privileged Supabase client. Bypasses RLS entirely.
@@ -13,11 +14,9 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
  * Only two callers are planned: app/api/contact/route.ts (S8) and admin
  * mutations (S11+). Never reach for this when server.ts would do; using the
  * service role where the anon client works silently discards RLS.
- *
- * S2 adds the generic: createSupabaseClient<Database>(...)
  */
 export function createAdminClient() {
-  return createSupabaseClient(
+  return createSupabaseClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {

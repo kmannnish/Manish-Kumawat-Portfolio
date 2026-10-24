@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { Database } from '@/lib/database.types'
 
 /**
  * Supabase client for Server Components, Route Handlers and middleware.
@@ -7,13 +8,11 @@ import { cookies } from 'next/headers'
  * Anon key, so RLS still applies — this is not a privileged client. Deliberately
  * no `import 'server-only'` here: middleware runs on the edge runtime and
  * legitimately imports this module. The privileged client is admin.ts.
- *
- * S2 adds the generic: createServerClient<Database>(...)
  */
 export async function createClient() {
   const cookieStore = await cookies()
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
