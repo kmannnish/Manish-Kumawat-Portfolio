@@ -1,14 +1,20 @@
-export default function HomePage() {
-  // S3 provides the shell foundation (TopBar, IndexRail, Footer).
-  // Section content (Hero, Trace, Work, Design, etc.) will be added in S4-S8.
+import { getCopyMap, getSiteSettings } from '@/lib/queries'
+import { Hero } from '@/components/sections/Hero'
+
+export default async function HomePage() {
+  const [copy, settings] = await Promise.all([
+    getCopyMap(),
+    getSiteSettings(),
+  ])
+
   return (
-    <div className="space-y-32 py-12">
-      <section id="work" className="min-h-[40vh]">
-        {/* Placeholder for S4 Hero / S6 Work */}
-      </section>
-      <section id="contact" className="min-h-[40vh]">
-        {/* Placeholder for S8 Contact */}
-      </section>
+    <div className="space-y-24">
+      {/* S4. Hero */}
+      <Hero copy={copy} settings={settings} />
+
+      {/* Placeholder anchors for S5 Trace and subsequent sections */}
+      <div id="work" className="min-h-[30vh]" />
+      <div id="contact" className="min-h-[30vh]" />
     </div>
   )
 }
