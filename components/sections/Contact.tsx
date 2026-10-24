@@ -30,11 +30,11 @@ export function Contact({ copy, settings }: ContactProps) {
   }, [])
 
   const nameLabel = t(copy, 'contact.form.name.label', 'Your name')
-  const namePlaceholder = t(copy, 'contact.form.name.placeholder', 'Priya Sharma')
+  const namePlaceholder = t(copy, 'contact.form.name.placeholder', 'Manish Kumawat')
   const companyLabel = t(copy, 'contact.form.company.label', 'Company')
   const companyPlaceholder = t(copy, 'contact.form.company.placeholder', 'Acme Corp')
   const emailLabel = t(copy, 'contact.form.email.label', 'Email')
-  const emailPlaceholder = t(copy, 'contact.form.email.placeholder', 'priya@acme.com')
+  const emailPlaceholder = t(copy, 'contact.form.email.placeholder', 'manish@example.com')
   const messageLabel = t(copy, 'contact.form.message.label', 'Message')
   const messagePlaceholder = t(
     copy,

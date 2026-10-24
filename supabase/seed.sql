@@ -87,11 +87,11 @@ insert into copy (key, value, kind, group_name, label) values
 
   -- Contact
   ('contact.form.name.label',       'Your name',    'text', 'contact', 'Form — name'),
-  ('contact.form.name.placeholder', 'Priya Sharma', 'text', 'contact', 'Form — name placeholder'),
+  ('contact.form.name.placeholder', 'Manish Kumawat', 'text', 'contact', 'Form — name placeholder'),
   ('contact.form.company.label',    'Company',      'text', 'contact', 'Form — company'),
   ('contact.form.company.placeholder', 'Acme Corp',  'text', 'contact', 'Form — company placeholder'),
   ('contact.form.email.label',      'Email',        'text', 'contact', 'Form — email'),
-  ('contact.form.email.placeholder','priya@acme.com','text','contact', 'Form — email placeholder'),
+  ('contact.form.email.placeholder','manish@example.com','text','contact', 'Form — email placeholder'),
   ('contact.form.message.label',    'Message',      'text', 'contact', 'Form — message'),
   ('contact.form.message.placeholder','Tell me about your project…','text','contact','Form — message placeholder'),
   ('contact.form.submit',           'Send message', 'text', 'contact', 'Form — submit'),
