@@ -354,19 +354,17 @@ limit 1;
 
 -- retail-mockup-generator: has mockup previews
 insert into project_media (project_id, media_id, role, sort_order)
-select p.id, m.id, 'gallery', i
+select p.id, m.id, 'gallery', (row_number() over (order by m.path) - 1)::integer
 from projects p, media m
 where p.slug = 'retail-mockup-generator'
-  and m.kind = 'mockup'
-order by m.path;
+  and m.kind = 'mockup';
 
 -- event-stage-design-system: has stage design photos
 insert into project_media (project_id, media_id, role, sort_order)
-select p.id, m.id, 'gallery', i
+select p.id, m.id, 'gallery', (row_number() over (order by m.path) - 1)::integer
 from projects p, media m
 where p.slug = 'event-stage-design-system'
-  and m.kind = 'stage'
-order by m.path;
+  and m.kind = 'stage';
 
 -- ── testimonials ─────────────────────────────────────────────────────────────
 insert into testimonials (author_name, author_role, author_org, quote, is_visible, sort_order) values
