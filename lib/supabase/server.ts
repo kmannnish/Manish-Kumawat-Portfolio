@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
@@ -34,4 +35,24 @@ export async function createClient() {
       },
     }
   )
+}
+
+/**
+ * Static client for build-time operations like generateStaticParams()
+ * where no HTTP request or cookie store exists.
+ * Uses anon key subject to RLS. Returns null if environment variables are unset.
+ */
+export function createStaticClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    return null
+  }
+
+  try {
+    return createSupabaseClient<Database>(url, key)
+  } catch {
+    return null
+  }
 }
