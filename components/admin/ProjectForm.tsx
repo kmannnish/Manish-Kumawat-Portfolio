@@ -218,49 +218,64 @@ export function ProjectForm({ initialData, initialTechIds = [] }: ProjectFormPro
       return
     }
 
-    setSaving(true)
-
-    const payload = {
-      id: initialData?.id,
-      title: title.trim(),
-      slug: slug.trim() || slugify(title),
-      summary: summary.trim(),
-      problem: problem.trim() || null,
-      approach: approach.trim() || null,
-      outcome: outcome.trim() || null,
-      body: body.trim(),
-      client_name: clientName.trim() || null,
-      role: role.trim() || null,
-      accent_color: accentColor,
-      cover_media_id: coverMediaId || null,
-      status,
-      is_featured: isFeatured,
-      show_in_design_section: showInDesign,
-      started_on: startedOn,
-      ended_on: isOngoing ? null : endedOn || null,
-      metrics: metrics as any,
-      links: links as any,
-      seo_title: seoTitle.trim() || null,
-      seo_description: seoDescription.trim() || null,
-      published_at:
-        status === 'published'
-          ? initialData?.published_at || new Date().toISOString()
-          : null,
+    // Sanity check: ended_on >= started_on
+    if (!isOngoing && endedOn && startedOn && endedOn < startedOn) {
+      const msg = 'Ended on date cannot be earlier than started on date.'
+      setValidationError(msg)
+      toast.error(msg)
+      return
     }
 
-    const res = await upsertProject(payload, selectedTechIds)
+    setSaving(true)
 
-    if (res.success) {
-      toast.success(
-        isEditing
-          ? `Updated project "${payload.title}"`
-          : `Created project "${payload.title}"`
-      )
-      router.push('/admin/projects')
-      router.refresh()
-    } else {
-      setValidationError(res.error || 'Failed to save project.')
-      toast.error(res.error || 'Failed to save project.')
+    try {
+      const payload = {
+        id: initialData?.id,
+        title: title.trim(),
+        slug: slug.trim() || slugify(title),
+        summary: summary.trim(),
+        problem: problem.trim() || null,
+        approach: approach.trim() || null,
+        outcome: outcome.trim() || null,
+        body: body.trim(),
+        client_name: clientName.trim() || null,
+        role: role.trim() || null,
+        accent_color: accentColor,
+        cover_media_id: coverMediaId || null,
+        status,
+        is_featured: isFeatured,
+        show_in_design_section: showInDesign,
+        started_on: startedOn,
+        ended_on: isOngoing ? null : endedOn || null,
+        metrics: metrics as any,
+        links: links as any,
+        seo_title: seoTitle.trim() || null,
+        seo_description: seoDescription.trim() || null,
+        published_at:
+          status === 'published'
+            ? initialData?.published_at || new Date().toISOString()
+            : null,
+      }
+
+      const res = await upsertProject(payload, selectedTechIds)
+
+      if (res.success) {
+        toast.success(
+          isEditing
+            ? `Updated project "${payload.title}"`
+            : `Created project "${payload.title}"`
+        )
+        router.push('/admin/projects')
+        router.refresh()
+      } else {
+        setValidationError(res.error || 'Failed to save project.')
+        toast.error(res.error || 'Failed to save project.')
+        setSaving(false)
+      }
+    } catch (err: any) {
+      console.error('Save project error:', err)
+      setValidationError(err?.message || 'An unexpected error occurred while saving.')
+      toast.error(err?.message || 'An unexpected error occurred while saving.')
       setSaving(false)
     }
   }
@@ -270,6 +285,8 @@ export function ProjectForm({ initialData, initialTechIds = [] }: ProjectFormPro
       <AdminHeader
         title={isEditing ? `Edit Project: ${initialData?.title}` : 'New Project'}
         description="Configure project case study, metrics, trace bar accent, and technologies."
+        backHref="/admin/projects"
+        backLabel="Back to Projects"
         action={
           <div className="flex items-center gap-3">
             <Link

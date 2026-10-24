@@ -45,7 +45,9 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
   // Highlights (Repeatable list of strings)
   const [highlights, setHighlights] = useState<string[]>(() => {
     if (Array.isArray(initialData?.highlights)) {
-      return initialData.highlights as string[]
+      return (initialData.highlights as any[]).map((h) =>
+        typeof h === 'string' ? h : h?.text || ''
+      )
     }
     return ['']
   })
@@ -70,39 +72,56 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    setSaving(true)
 
-    const cleanedHighlights = highlights
-      .map((h) => h.trim())
-      .filter((h) => h.length > 0)
-
-    const payload = {
-      id: initialData?.id,
-      organization: organization.trim(),
-      role: role.trim(),
-      location: location.trim() || null,
-      employment_type: employmentType || null,
-      started_on: startedOn,
-      ended_on: isOngoing ? null : endedOn || null,
-      summary: summary.trim() || null,
-      highlights: cleanedHighlights as any,
-      accent_color: accentColor,
-      is_visible: isVisible,
+    // Sanity check: ended_on >= started_on
+    if (!isOngoing && endedOn && startedOn && endedOn < startedOn) {
+      const msg = 'Ended on date cannot be earlier than started on date.'
+      setError(msg)
+      toast.error(msg)
+      return
     }
 
-    const res = await upsertExperience(payload)
+    setSaving(true)
 
-    if (res.success) {
-      toast.success(
-        isEditing
-          ? `Updated role at ${payload.organization}`
-          : `Created experience at ${payload.organization}`
-      )
-      router.push('/admin/experience')
-      router.refresh()
-    } else {
-      setError(res.error || 'Failed to save experience.')
-      toast.error(res.error || 'Failed to save experience.')
+    try {
+      const cleanedHighlights = highlights
+        .map((h) => (typeof h === 'string' ? h.trim() : (h as any)?.text?.trim() || ''))
+        .filter((h) => h.length > 0)
+        .map((text) => ({ text }))
+
+      const payload = {
+        id: initialData?.id,
+        organization: organization.trim(),
+        role: role.trim(),
+        location: location.trim() || null,
+        employment_type: employmentType || null,
+        started_on: startedOn,
+        ended_on: isOngoing ? null : endedOn || null,
+        summary: summary.trim() || null,
+        highlights: cleanedHighlights as any,
+        accent_color: accentColor,
+        is_visible: isVisible,
+      }
+
+      const res = await upsertExperience(payload)
+
+      if (res.success) {
+        toast.success(
+          isEditing
+            ? `Updated role at ${payload.organization}`
+            : `Created experience at ${payload.organization}`
+        )
+        router.push('/admin/experience')
+        router.refresh()
+      } else {
+        setError(res.error || 'Failed to save experience.')
+        toast.error(res.error || 'Failed to save experience.')
+        setSaving(false)
+      }
+    } catch (err: any) {
+      console.error('Save experience error:', err)
+      setError(err?.message || 'An unexpected error occurred while saving.')
+      toast.error(err?.message || 'An unexpected error occurred while saving.')
       setSaving(false)
     }
   }
@@ -112,6 +131,8 @@ export function ExperienceForm({ initialData }: ExperienceFormProps) {
       <AdminHeader
         title={isEditing ? `Edit Role: ${initialData?.organization}` : 'New Experience'}
         description="Configure employment history, advisory roles, and deployment trace bars."
+        backHref="/admin/experience"
+        backLabel="Back to Experience"
         action={
           <div className="flex items-center gap-3">
             <Link

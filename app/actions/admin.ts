@@ -313,22 +313,23 @@ export async function upsertExperience(
 ) {
   try {
     const supabase = await createClient()
+    const { id, ...record } = data
 
-    if (data.id) {
+    if (id) {
       const { error } = await supabase
         .from('experience')
         .update({
-          ...data,
+          ...record,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', data.id)
+        .eq('id', id)
 
       if (error) return { success: false, error: error.message }
     } else {
       const { error } = await supabase
         .from('experience')
         .insert({
-          ...data,
+          ...record,
           updated_at: new Date().toISOString(),
         })
 
