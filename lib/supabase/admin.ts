@@ -16,14 +16,13 @@ import type { Database } from '@/lib/database.types'
  * service role where the anon client works silently discards RLS.
  */
 export function createAdminClient() {
-  return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    }
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder'
+
+  return createSupabaseClient<Database>(url, key, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  })
 }
