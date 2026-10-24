@@ -99,3 +99,31 @@
     font-optical-sizing: auto;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Motion budget — S5: One orchestrated load sequence only.
+   Axis draws once, bars grow left-to-right (~600ms total / 40ms stagger).
+   Shipped with prefers-reduced-motion in the same declaration block.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@keyframes traceGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-trace-grow {
+  transform-origin: left;
+  animation: traceGrow 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-trace-grow {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
