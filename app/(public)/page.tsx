@@ -16,6 +16,7 @@ import { About } from '@/components/sections/About'
 import { Skills } from '@/components/sections/Skills'
 import { Writing } from '@/components/sections/Writing'
 import { Testimonials } from '@/components/sections/Testimonials'
+import { Contact } from '@/components/sections/Contact'
 
 export default async function HomePage() {
   const [
@@ -165,11 +166,7 @@ export default async function HomePage() {
               />
             )
           case 'contact':
-            return (
-              <div key={section.id} id="contact" className="min-h-[10vh]">
-                {/* S8 Contact form lands here */}
-              </div>
-            )
+            return <Contact key={section.id} copy={copy} settings={settings} />
           default:
             return null
         }
