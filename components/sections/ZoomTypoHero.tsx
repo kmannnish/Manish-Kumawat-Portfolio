@@ -30,7 +30,7 @@ const PORTRAITS = [
     tag: '02 // DESIGNER',
     role: 'High-Craft Interface Director',
     quote: 'Bridging engineering precision with memorable aesthetic craft.',
-    objectPosition: 'center 28%',
+    objectPosition: 'center 26%',
   },
   {
     id: 'builder',
