@@ -170,18 +170,26 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
             preserveAspectRatio="xMidYMid slice"
           >
             <defs>
+              <style>{`
+                .typo-desktop { display: block; }
+                .typo-mobile { display: none; }
+                @media (max-width: 767px) {
+                  .typo-desktop { display: none; }
+                  .typo-mobile { display: block; }
+                }
+              `}</style>
               <mask id="apple-typo-cutout-mask" x="0" y="0" width="100%" height="100%">
                 {/* Everything in white is visible paper */}
                 <rect x="0" y="0" width="100%" height="100%" fill="#FFFFFF" />
 
-                {/* Everything in black is CUT OUT to reveal the portrait underneath */}
+                {/* ── DESKTOP DISPLAY TYPOGRAPHY (md and up) ── */}
                 <g
+                  className="typo-desktop hidden md:block"
                   style={{
                     transformOrigin: '720px 450px',
                     transform: `scale(${zoomScale})`,
                   }}
                 >
-                  {/* Giant Primary Display Typography */}
                   <text
                     x="720"
                     y="390"
@@ -206,8 +214,6 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
                   >
                     KUMAWAT
                   </text>
-
-                  {/* Subtitle cutout hairline */}
                   <text
                     x="720"
                     y="575"
@@ -217,6 +223,52 @@ export function ZoomTypoHero({ copy, settings }: ZoomTypoHeroProps) {
                     fontWeight="700"
                     fontSize="22"
                     letterSpacing="0.22em"
+                  >
+                    AI ENGINEER & DESIGNER
+                  </text>
+                </g>
+
+                {/* ── MOBILE DISPLAY TYPOGRAPHY (below md): Proportional, zero text clipping ── */}
+                <g
+                  className="typo-mobile block md:hidden"
+                  style={{
+                    transformOrigin: '720px 450px',
+                    transform: `scale(${zoomScale})`,
+                  }}
+                >
+                  <text
+                    x="720"
+                    y="405"
+                    textAnchor="middle"
+                    fill="#000000"
+                    fontFamily="Instrument Sans, sans-serif"
+                    fontWeight="900"
+                    fontSize="70"
+                    letterSpacing="-0.03em"
+                  >
+                    MANISH
+                  </text>
+                  <text
+                    x="720"
+                    y="480"
+                    textAnchor="middle"
+                    fill="#000000"
+                    fontFamily="Instrument Sans, sans-serif"
+                    fontWeight="900"
+                    fontSize="70"
+                    letterSpacing="-0.03em"
+                  >
+                    KUMAWAT
+                  </text>
+                  <text
+                    x="720"
+                    y="520"
+                    textAnchor="middle"
+                    fill="#000000"
+                    fontFamily="Instrument Sans, sans-serif"
+                    fontWeight="700"
+                    fontSize="12"
+                    letterSpacing="0.18em"
                   >
                     AI ENGINEER & DESIGNER
                   </text>
