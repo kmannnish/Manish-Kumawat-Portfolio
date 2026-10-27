@@ -143,7 +143,13 @@ insert into tech (name, slug, category, proficiency, is_featured, sort_order) va
   ('Kotlin',          'kotlin',           'language',   5, true, 29),
   ('SQLCipher',       'sqlcipher',        'infra',      5, true, 30),
   ('SQLite',          'sqlite',           'infra',      5, false,31),
-  ('Reverse Engineering', 'reverse-engineering', 'tooling', 5, true, 32);
+  ('Reverse Engineering', 'reverse-engineering', 'tooling', 5, true, 32),
+  ('Google Apps Script', 'google-apps-script', 'language', 5, true, 33),
+  ('Google Sheets',   'google-sheets',    'tooling',    5, true, 34),
+  ('AppSheet',        'appsheet',         'framework',  5, true, 35),
+  ('Gmail API',       'gmail-api',        'infra',      5, true, 36),
+  ('ERP Architecture','erp-architecture', 'tooling',    5, true, 37),
+  ('Excel',           'excel',            'tooling',    5, false,38);
 
 -- ── experience ───────────────────────────────────────────────────────────────
 -- Overlapping start dates so the trace chart has something to render.
@@ -327,7 +333,98 @@ Furthermore, the app employed proprietary SQLCipher v4 encrypted databases with 
   '[{"label":"Download APK (v1.0)","url":"https://github.com/kmannnish/vachanamrut-study-hindi/releases/download/v1.0/Vachanamrut_Study_Hindi_Final.apk","kind":"download"},{"label":"GitHub Release & Source","url":"https://github.com/kmannnish/vachanamrut-study-hindi.git","kind":"github"}]'
 );
 
--- Project 3: Featured project (Padharo House)
+-- Project 3: Featured project (UV Overseas Multi-Tenant ERP & Distributed CRM)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'uv-overseas-crm',
+  'UV Overseas Multi-Tenant ERP & Distributed CRM System',
+  'Enterprise multi-tenant Hub-and-Spoke ERP engineered on Google Sheets and Google Apps Script (10,600+ lines). Seamlessly synchronizes 5 departments with sub-second bi-directional triggers, automated 3-tier payment escalation alerts via Gmail, and zero-data-loss annual financial year archiving.',
+  '## Enterprise Hub-and-Spoke Architecture Overview
+
+When multiple departments in a global export company need to work simultaneously on high-value purchase orders, single-sheet architectures inevitably fail. Concurrent edits overwrite critical rows, cell formulas get accidentally deleted, and finance teams lose audit integrity.
+
+To solve this, I designed and deployed a distributed **Hub-and-Spoke Enterprise Architecture**:
+
+1. **The Admin Master Hub**: A centralized, locked spreadsheet containing the master `Order Ledger`, `Client Summary`, `Client Dues`, `Client Credit`, `Team Members`, `Activity Log`, and an executive KPI `Dashboard`.
+2. **Distributed CRM Spokes**: Regional, independent spreadsheets assigned to individual CRM executives. Each Spoke contains dynamically provisioned client sub-tabs, completely isolating client records from unauthorized visibility.
+3. **AppSheet Mobile Client**: Real-time companion application allowing field agents and warehouse managers to inspect shipping manifests, record dispatch timestamps, and log courier AWB tracking numbers directly from tablets and mobile phones.
+
+---
+
+## 10,600+ Lines of Custom Google Apps Script Engine
+
+At the core of the UV Overseas system is `CRM_v14_merged.gs` — an enterprise-grade automation codebase comprising over 10,600 lines of JavaScript executing within Google Workspace infrastructure:
+
+- **UUID Transaction Isolation**: Every order line is assigned an immutable UUID upon creation. Bi-directional sync queries target this UUID, guaranteeing that even if rows are sorted or filtered, updates map to the exact underlying record with zero drift.
+- **Bi-Directional Sync Triggers**:
+  - `onCRMSubTabEdit`: Listens for row entries in any CRM spoke sub-tab, computes customs invoice values, and pushes the new order payload directly into the Master Hub''s `Order Ledger`.
+  - `onMasterHubEdit`: Listens for payment clearances by Accounts or tracking dispatches by Logistics, instantly propagating status badges and receipt amounts back into the client''s CRM sub-tab.
+- **Role-Based Access Control (RBAC)**: Protects ranges programmatically. CRM executives cannot alter accounts payment columns, accounts teams cannot modify client purchase specs, and logistics teams are scoped strictly to courier and AWB fields.
+
+---
+
+## Automated 3-Tier Payment Escalation Engine
+
+International trade relies on strict payment milestone discipline (e.g. 30% advance on PI, 70% before bill of lading release). The system features an autonomous 9:00 AM daily cron trigger that scans all open orders against client credit terms:
+
+- **Tier 1 (7 Days Before Due Date)**: Courteous advance notification email draft sent to CRM owner and client with attached statement of accounts.
+- **Tier 2 (Due Today)**: Payment due notice flagging invoice number, bank swift details, and outstanding balance.
+- **Tier 3 (Overdue Escalation)**: High-priority escalation dispatched to Admin and Accounts directors with automatic order-hold flags applied to the CRM interface.
+
+---
+
+## Zero-Data-Loss Annual Financial Year Archiving
+
+Google Sheets performance degrades as sheets approach millions of cells. To guarantee lifelong speed without data loss, I built an automated April 1st archiving engine:
+
+```javascript
+function getArchiveFYLabel_(forDate) {
+  var d = forDate || new Date();
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1; // 1-12
+  var fyStartYear = month >= 4 ? year - 1 : year - 2;
+  var fyEndYear = fyStartYear + 1;
+  return ''Archive FY'' + fyStartYear + ''-'' + String(fyEndYear).slice(-2);
+}
+```
+
+On April 1st at 1:00 AM, the script:
+1. Provisions a dedicated archive sheet (e.g. `Archive FY2024-25`).
+2. Moves all fully reconciled and delivered orders from the prior financial year into the archive.
+3. Recalculates all historical client totals and preserves audit integrity while keeping active operational sheets lean, fast, and responsive.',
+  'Lead System Architect & Automation Engineer',
+  '2024-03-01',
+  '2024-11-30',
+  'published',
+  true,
+  false,
+  2,
+  '#3C3489',
+  'UV Overseas, an international trading and manufacturing export house, faced severe operational bottlenecks as order volume scaled:
+- Fragmented Spreadsheets & Overwrite Collisions: Multiple CRM executives, sales managers, and logistics coordinators simultaneously edited the same Google Sheets, causing frequent cell overwrite conflicts, race conditions, and corrupted order rows.
+- Siloed Department Workflows: Accounts lacked real-time visibility into new orders generated by CRM; CRM had no automated feedback on incoming payments, invoice balance clearances, or courier AWB tracking numbers.
+- Manual Communication Overhead: CRM staff manually spent over 80 hours monthly drafting order confirmations and payment reminder emails, often missing critical 7-day advance payment deadlines for international freight.
+- Google Sheets Cell Quota Overflows: Growing transaction histories threatened Google Sheets'' hard cell limits (10 million cells), causing calculation lag, slow load times, and risking catastrophic sheet crashes.',
+  'Architected and developed a complete distributed ERP solution built around a resilient Hub-and-Spoke engine in Google Apps Script (CRM_v14_merged.gs — 10,624 lines of clean, modular JavaScript):
+- Hub-and-Spoke Architecture: Created a single protected Admin Master Hub sheet containing the master Order Ledger, Client Summary, and Live Dashboard, connected bi-directionally to regional CRM Spoke spreadsheets assigned to individual executives.
+- Sub-Tab Auto-Provisioning & UUID Tracking: Automated the generation of isolated client sub-tabs per customer with running order totals, automated formulas, and UUID-based line tracking to prevent cross-account data leakage.
+- Real-Time Bi-Directional Synchronization: Engineered onEdit triggers with concurrency locking: new order items entered in CRM spokes instantly sync into the Admin Master Hub within <2 seconds, while Accounts payment dates and Logistics courier AWB updates in Master Hub sync back into CRM sub-tabs.
+- 3-Tier Automated Payment Escalations: Scheduled a daily 9 AM cron automation that calculates due dates, issues 7-day advance reminders, due-today notifications, and overdue escalation alerts via the Gmail API with personalized email drafts.
+- Annual Financial Year Archiving Engine: Implemented an automated April 1st archival cron trigger (getArchiveFYLabel_) that migrates completed orders older than 1 year to dedicated FY archive sheets (e.g., Archive FY2024-25), maintaining lightning-fast calculation speeds and 100% cell quota safety.
+- AppSheet Mobile / Tablet Field Integration: Connected Google Sheets to AppSheet for mobile on-field order entry and dispatch verification by warehouse logistics.',
+  'Successfully transformed UV Overseas'' international trade operations into an automated, fault-tolerant digital enterprise:
+- 100% elimination of editing collisions, race conditions, and data loss across all active sales cycles.
+- Sub-2-second sync latency across distributed regional CRM spokes and central Admin accounting.
+- Saved 80+ hours/month of manual administrative drafting and payment chasing through automated Gmail triggers.
+- Guaranteed long-term system health and sub-second calculation performance via automated April 1st FY archiving.',
+  '[{"label":"Editing Concurrency","before":"Overwrites & Race Conditions","after":"Zero Conflicts (Isolated Spokes)","unit":"100% Data Integrity","is_headline":true},{"label":"Sync Latency","before":"Manual re-entry (hours)","after":"<2 Seconds","unit":"Two-way triggers","is_headline":false},{"label":"Departments Coordinated","before":"Fragmented silos","after":"5 Departments","unit":"Admin, Sales, CRM, Accounts, Logistics","is_headline":false},{"label":"Custom Automation Core","before":"Manual scripts","after":"10,600+ Lines","unit":"Google Apps Script","is_headline":false}]',
+  '[{"label":"System Proposal & Docs","url":"https://github.com/kmannnish","kind":"github"}]'
+);
+
+-- Project 4: Featured project (Padharo House)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order, accent_color,
@@ -354,7 +451,7 @@ Padharo House is an exclusive boutique homestay nestled directly opposite the Am
   'published',
   true,
   true,
-  2,
+  3,
   '#A8321C',
   'Traditional boutique homestays in heritage corridors often rely entirely on high-commission aggregators (18% to 25% take rates) with zero direct branding, disconnected guest communication, and manual spreadsheet reconciliation.
 
@@ -423,7 +520,7 @@ An interactive accordion system synthesized from masterclass personal finance te
   'published',
   true,
   false,
-  3,
+  4,
   '#2563EB',
   'Traditional personal finance calculators oversimplify retirement into a single, static corpus number without accounting for Indian asset classes (Sovereign Gold Bonds, Senior Citizen FDs, Index Funds), dynamic compounding ROI, or how money is actually safely drawn down post-retirement.
 
@@ -459,7 +556,7 @@ insert into projects (
   'published',
   true,
   false,
-  4,
+  5,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -483,7 +580,7 @@ insert into projects (
   'published',
   true,
   true,
-  5,
+  6,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -507,7 +604,7 @@ insert into projects (
   'published',
   false,
   false,
-  6,
+  7,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -531,7 +628,7 @@ insert into projects (
   'published',
   false,
   true,
-  7,
+  8,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',
@@ -555,6 +652,13 @@ select p.id, t.id
 from projects p, tech t
 where p.slug = 'vachanamrut-study-hindi'
   and t.slug in ('android','java','kotlin','sqlcipher','sqlite','reverse-engineering','git');
+
+-- Featured Project: UV Overseas Multi-Tenant ERP & CRM
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'uv-overseas-crm'
+  and t.slug in ('google-apps-script','javascript','google-sheets','appsheet','gmail-api','erp-architecture','excel');
 
 -- Featured Project: Padharo House
 insert into project_tech (project_id, tech_id)
