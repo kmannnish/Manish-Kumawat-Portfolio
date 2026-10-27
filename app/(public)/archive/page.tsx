@@ -36,9 +36,9 @@ export default async function ArchivePage() {
         <p className="text-data text-graphite">{emptyLabel}</p>
       ) : (
         <div className="relative overflow-x-auto">
-          {/* Real <table> with sticky backdrop-blur head and progressively dropped columns */}
+          {/* Real <table> with clean border and progressively dropped columns */}
           <table className="w-full border-collapse text-left text-data">
-            <thead className="sticky top-11 z-20 bg-paper/95 backdrop-blur-xs border-b border-rule-strong text-xs font-medium uppercase tracking-wider text-ink">
+            <thead className="border-b border-rule-strong text-xs font-medium uppercase tracking-wider text-ink">
               <tr>
                 <th scope="col" className="py-3 pr-4 pl-2 font-medium">
                   Year
