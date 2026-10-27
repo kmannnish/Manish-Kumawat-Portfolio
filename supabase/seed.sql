@@ -133,7 +133,11 @@ insert into tech (name, slug, category, proficiency, is_featured, sort_order) va
   ('Git',             'git',              'tooling',    5, false,19),
   ('Firebase',        'firebase',         'infra',      5, true, 20),
   ('Firestore',       'firestore',        'infra',      5, true, 21),
-  ('Vite',            'vite',             'tooling',    5, false,22);
+  ('Vite',            'vite',             'tooling',    5, false,22),
+  ('JavaScript',      'javascript',       'language',   5, true, 23),
+  ('HTML5',           'html5',            'framework',  5, false,24),
+  ('CSS3',            'css3',             'framework',  5, false,25),
+  ('Netlify',         'netlify',          'infra',      4, false,26);
 
 -- ── experience ───────────────────────────────────────────────────────────────
 -- Overlapping start dates so the trace chart has something to render.
@@ -289,7 +293,77 @@ Inquiries arriving through Instagram and phone calls frequently led to calendar 
   '[{"label":"Live Website","url":"https://padharohouse.in","kind":"live"},{"label":"Host Console","url":"https://padharohouse.in/admin","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/kmannnish/padharohouse","kind":"code"}]'
 );
 
--- Project 3: Engineering project (show_in_design_section = false)
+-- Project 3: Featured project (FIRE Dashboard)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'fire-dashboard',
+  'FIRE Dashboard — Personal Wealth Engine & Playbook',
+  'An interactive personal finance engine and wealth playbook calculating dynamic retirement timelines, 400x corpus targets, 40/40/20 capital allocation, and post-FIRE bucket distributions.',
+  '## Background & Purpose
+The FIRE (Financial Independence, Retire Early) movement has gained widespread popularity, yet most available tools fail to reflect the nuances of the Indian financial ecosystem. Most web calculators apply a generic 4% rule without accounting for local inflation, asset-specific tax treatments, or the risk of sequencing returns during retirement.
+
+FIRE Dashboard was built to bridge this gap: combining a zero-latency logarithmic compounding calculator with an actionable, structured wealth blueprint playbook.
+
+---
+
+## Engineering & Architectural Pillars
+
+### 1. Logarithmic Compounding Engine (0ms Latency)
+The calculator computes retirement timelines dynamically as the user adjusts monthly income, monthly expenses, target savings rate, and expected asset returns. The calculation uses a closed-form logarithmic compounding formula:
+
+$$\\text{Months to FIRE} = \\frac{\\ln\\left(\\frac{\\text{Target} \\times r_m}{\\text{Monthly Investment}} + 1\\right)}{\\ln(1 + r_m)}$$
+
+Where $r_m$ is the monthly weighted return across the portfolio. All calculations execute client-side instantly with zero API roundtrips.
+
+### 2. 40/40/20 Capital Allocation
+Rather than concentrating risk in volatile equities or low-yielding cash, the engine visualizes a proven three-pillar allocation:
+- **40% Equity:** Nifty 50 and Nifty Next 50 Index Funds, fundamentally sound direct equities.
+- **40% Fixed Income / Debt:** Government Bonds, Senior Citizen Fixed Deposits, and high-safety debt instruments.
+- **20% Gold:** Sovereign Gold Bonds (SGBs with 2.5% annual sovereign yield) and Gold ETFs acting as an inflation hedge.
+
+### 3. Post-FIRE: The Bucket Strategy Engine
+Hitting a 400x corpus target (a conservative 3% safe withdrawal rate) does not mean liquidating capital. The dashboard visualizes the Day 1 retirement architecture:
+- **Bucket 1 (The Safety Net — 36x expenses):** 3 full years of living expenses locked in 100% ultra-safe liquid debt / FDs. Monthly living expenses are withdrawn solely from here, shielding daily life from stock market crashes.
+- **Bucket 2 (The Growth Engine — 364x expenses):** Compounding continuously in the 40/40/20 mix. Once a year, harvested gains refill Bucket 1, beating inflation indefinitely.
+
+### 4. The Wealth Blueprint Playbook
+An interactive accordion system synthesized from masterclass personal finance teachings:
+1. **Executive Summary:** The core philosophy of money as a tool for freedom.
+2. **The Golden Rules:** 30%+ minimum savings targets, expense tracking, and emergency buffers.
+3. **Debt Eradication:** Accelerated principal repayment and credit card discipline.
+4. **Asset Classes Deep Dive:** Mechanics of Equity, Fixed Income, Gold, and Real Estate.
+5. **The Insurance Shield:** Term and health insurance defense prior to investing.
+6. **Chronological Action Plan:** Decade-by-decade milestones from age 20 to 50+.',
+  'Lead Product Engineer & Financial Architect',
+  '2024-10-01',
+  null,
+  'published',
+  true,
+  false,
+  2,
+  '#2563EB',
+  'Traditional personal finance calculators oversimplify retirement into a single, static corpus number without accounting for Indian asset classes (Sovereign Gold Bonds, Senior Citizen FDs, Index Funds), dynamic compounding ROI, or how money is actually safely drawn down post-retirement.
+
+Users are often left overwhelmed by financial jargon, speculative stock tips, and predatory high-interest debt traps without an actionable, mathematical blueprint to achieve true financial independence.',
+  'Designed and engineered a dual-mode client-side financial application combining a high-performance logarithmic compounding engine with a structured wealth playbook:
+- Financial Engine: Real-time calculation of 400x living expense targets, target savings rate slider (10% to 80%), and independent ROI sliders for Equity (14%), Debt (7%), and Gold (9%).
+- Logarithmic Compounding Model: Computes the exact years to FIRE using mathematically rigorous compounding formulas with zero server roundtrip latency.
+- 40/40/20 Capital Allocation Bar: Visualized asset allocation balancing growth (Index Funds & Direct Stocks), stability (Govt Bonds & Senior Citizen FDs), and hedge protection (Sovereign Gold Bonds with 2.5% yield & Gold ETFs).
+- Post-FIRE Bucket Strategy Engine: Synthesizes a two-bucket drawdown structure: Bucket 1 Safety Net (36x expenses in ultra-safe liquid debt) and Bucket 2 Growth Engine (364x compounding in 40/40/20) with annual profit harvesting.
+- The Wealth Blueprint: An 8-module interactive accordion playbook synthesizing core principles: Debt eradication, insurance defense shields, emergency fund architecture, and chronological wealth milestones.',
+  'FIRE Dashboard provides individuals with an immediate, mathematically sound retirement projection and actionable financial playbook with zero friction:
+- 0ms client-side calculation latency with instant visual feedback across all dynamic sliders.
+- Comprehensive 400x corpus roadmap tailored to Indian tax and investment vehicles (SGBs, Debt FDs, Nifty Index Funds).
+- Two-bucket drawdown strategy eliminating stock market panic during retirement.
+- Integrated Buy Me a Coffee support widget enabling direct community backing.',
+  '[{"label":"Corpus Calculation","before":"Generic 25x/30x rule","after":"400x Target","unit":"(3% SWR)","is_headline":true},{"label":"Asset Allocation","before":"Ad-hoc / Unbalanced","after":"40/40/20 Ratio","unit":"Equity / Debt / Gold","is_headline":false},{"label":"Drawdown Architecture","before":"Lump sum panic","after":"Dual-Bucket Model","unit":"36x Safety + 364x Growth","is_headline":false},{"label":"Calculation Latency","before":"Server roundtrip","after":"0ms Latency","unit":"client-side math","is_headline":false}]',
+  '[{"label":"Live Dashboard","url":"https://fire-personal.netlify.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/kmannnish/FIRE-Dashboard.git","kind":"github"}]'
+);
+
+-- Project 4: Engineering project (show_in_design_section = false)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -305,7 +379,7 @@ insert into projects (
   'published',
   true,
   false,
-  2,
+  3,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -313,7 +387,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/logistics-agent","kind":"code"}]'
 );
 
--- Project 4: Engineering + design (show_in_design_section = true)
+-- Project 5: Engineering + design (show_in_design_section = true)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -329,7 +403,7 @@ insert into projects (
   'published',
   true,
   true,
-  3,
+  4,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -337,7 +411,7 @@ insert into projects (
   '[{"label":"Live tool","url":"https://example.com/mockup","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/mockup-gen","kind":"code"}]'
 );
 
--- Project 5: Engineering project
+-- Project 6: Engineering project
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -353,7 +427,7 @@ insert into projects (
   'published',
   false,
   false,
-  4,
+  5,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -361,7 +435,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/content-pipeline","kind":"code"}]'
 );
 
--- Project 6: Engineering + design
+-- Project 7: Engineering + design
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -377,7 +451,7 @@ insert into projects (
   'published',
   false,
   true,
-  5,
+  6,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',
@@ -388,7 +462,28 @@ insert into projects (
 
 -- ── project_tech ─────────────────────────────────────────────────────────────
 -- Map tech slugs to project slugs. Tech IDs must match real inserts above.
--- Project 1: TypeScript, Python, Next.js, Tailwind, Supabase, OpenAI
+-- Flagship Project: BAPS Jaipur MDS
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'baps-jaipur-mds'
+  and t.slug in ('react','tailwindcss','firebase','firestore','nodejs','vite','git');
+
+-- Featured Project: Padharo House
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'padharo-house'
+  and t.slug in ('javascript','tailwindcss','html5','css3','firebase','firestore','git');
+
+-- Featured Project: FIRE Dashboard
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'fire-dashboard'
+  and t.slug in ('javascript','tailwindcss','html5','css3','netlify','git');
+
+-- Project 4: Logistics AI Agent (TypeScript, Python, Next.js, Tailwind, Supabase, OpenAI)
 insert into project_tech (project_id, tech_id)
 select p.id, t.id
 from projects p, tech t
