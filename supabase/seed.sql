@@ -137,7 +137,13 @@ insert into tech (name, slug, category, proficiency, is_featured, sort_order) va
   ('JavaScript',      'javascript',       'language',   5, true, 23),
   ('HTML5',           'html5',            'framework',  5, false,24),
   ('CSS3',            'css3',             'framework',  5, false,25),
-  ('Netlify',         'netlify',          'infra',      4, false,26);
+  ('Netlify',         'netlify',          'infra',      4, false,26),
+  ('Android',         'android',          'framework',  5, true, 27),
+  ('Java',            'java',             'language',   5, true, 28),
+  ('Kotlin',          'kotlin',           'language',   5, true, 29),
+  ('SQLCipher',       'sqlcipher',        'infra',      5, true, 30),
+  ('SQLite',          'sqlite',           'infra',      5, false,31),
+  ('Reverse Engineering', 'reverse-engineering', 'tooling', 5, true, 32);
 
 -- ── experience ───────────────────────────────────────────────────────────────
 -- Overlapping start dates so the trace chart has something to render.
@@ -247,7 +253,81 @@ Key outcomes:
   '[{"label":"Live Portal","url":"https://sampark-mds.vercel.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/bapsjaipur/sampark-mds","kind":"github"}]'
 );
 
--- Project 2: Featured project (Padharo House)
+-- Project 2: Featured project (BAPS Vachanamrut Study Hindi)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'vachanamrut-study-hindi',
+  'BAPS Vachanamrut Study — Official Hindi Edition & Audio Engine',
+  'Reverse-engineered and enhanced the official BAPS Vachanamrut Study Android app to natively support Hindi across all 276 discourses, 339-key UI localization, SQLCipher v4 encrypted database, and dynamic dual-language audio streaming.',
+  '## Background & Mission
+The Vachanamrut is the principal theological scripture of the Swaminarayan Sampradaya, containing 276 philosophical discourses delivered by Bhagwan Swaminarayan between 1819 and 1829. 
+
+The official **BAPS Vachanamrut Study** mobile application provides interactive study tools, cross-references, audio playback, and reading plans, but was historically available only in Gujarati and English. This project engineered full native Hindi support across both UI and content, while resolving deep-seated architectural and platform-compatibility challenges on modern Android operating systems.
+
+---
+
+## Technical Accomplishments & Architecture
+
+### 1. SQLCipher v4 Native Database Decryption & Hindi Activation
+The application stores all scripture text, reading history, and UI metadata inside an encrypted SQLite database (`contentdb_v.sqlite`).
+- **Key & Salt Derivation:** Decrypted using SQLCipher PBKDF2 sha512 with 256,000 iterations, discovering the proprietary passkey `org.baps.vma` and salt `swaminarayan`.
+- **Language ID 5 (Hindi) Integration:**
+  - Configured Hindi tab metadata in `constants` table (`list_of_verses_sections`, `reading_plans`, `subjects`, `favourites`, `history`).
+  - Activated Hindi search indexing in `languages` table (`showSearchOptions` for whole word, whole letter, and substring).
+  - Populated metadata, subjects, and introductory text for all 12 sections.
+- **Re-encryption:** Re-encrypted using SQLCipher v4 specifications, allowing native JNI SQLite libraries (`libsqliteX.so`) to query and unpack all 276 Hindi discourses with zero performance degradation.
+
+### 2. Resolution of Density Bucketing & Android 13/14 RemoteViews Crash
+On modern devices running Android 13 and 14 (e.g. Motorola Moto G52), tapping "Audio" previously triggered an immediate fatal crash:
+`BadForegroundServiceNotificationException: Couldn''t inflate contentViews... Error inflating class <unknown>`
+- **Root Cause Analysis:** The audio foreground notification layout required media playback drawables (`ic_skip_previous.png`, `ic_skip_next.png`, `ic_pause_circle_outline.png`, `ic_play_circle_outline.png`) that were isolated in tablet splits (`drawable-sw600dp`). When phone SystemUI attempted to inflate the notification, missing drawables threw inflation exceptions.
+- **Resolution:** Deployed standardized drawables into `res/drawable/` default fallback and all pixel density buckets (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`), replacing null layout references with safe transparent vectors.
+
+### 3. Dynamic Language-Aware Audio Routing Engine
+The original audio player hardcoded remote audio retrieval to Gujarati-only endpoints (`https://download.baps.org/apps/Vachanamrut/link.php?v=...`), discarding non-matching file sizes (~4.4 MB Hindi tracks vs ~1.8 MB Gujarati tracks).
+- **Dynamic URL Generation (`com.library.player.Player.smali`):** Patched bytecode to inspect the active discourse language (`ReaderActivity.R0.langID`).
+  - When `langID == 5` (Hindi), routes directly to authentic high-fidelity Hindi audio CDN releases: `https://github.com/kmannnish/vachanamrut-study-hindi/releases/download/v1.0/{vSeqNo}.mp3`
+  - When `langID == 1` (Gujarati), routes seamlessly to official BAPS Gujarati streaming servers.
+- **Adaptive Track Validation:** Removed hardcoded size restrictions in `Player.smali` -> `resetAndPrepare`, allowing Hindi MP3/AAC audio files to validate and play offline.
+- **Dynamic Playlist Construction:** Implemented fallback playlist construction in `ReaderActivity.smali` so discourses opened directly from section lists play audio without null pointer exceptions.
+
+### 4. 339-Key Hindi UI Translation Dictionary & Settings Activation
+- Activated `isUILang = 1` for `langID = 5` in SQLite.
+- Produced and injected a comprehensive 339-key Hindi Devnagari translation dictionary covering all navigation drawer items, reader menus, settings toggles, and modal dialogues.
+
+### 5. 64-Bit Native Architecture & Physical Device Verification
+- Extracted and aligned native 64-bit binaries (`arm64-v8a`), preventing binary mismatch errors on modern chipsets.
+- Verified on a physical Android 13/14 device (**Moto G52 / ZD2225QFZG**) with zero crashes across cold launches, audio playback, language switching, and background foreground transitions.',
+  'Lead Mobile Reverse Engineer & Systems Architect',
+  '2024-10-15',
+  null,
+  'published',
+  true,
+  false,
+  1,
+  '#EA580C',
+  'The official BAPS Vachanamrut Study Android app (org.baps.vachanamrut) lacked native Hindi support for millions of Hindi-speaking devotees and researchers worldwide. While the scriptures existed in print, the digital mobile application was strictly restricted to Gujarati and English.
+
+Furthermore, the app employed proprietary SQLCipher v4 encrypted databases with hidden salt and passkeys, hardcoded Gujarati audio streaming endpoints, and suffered from critical BadForegroundServiceNotificationException crashes on modern Android 13/14 devices due to layout inflation bugs in SystemUI.',
+  'Decompiled, reverse-engineered, and re-architected the APK using Smali instrumentation, native library alignment, and cryptographic database re-engineering:
+- Cryptographic Decryption & Re-encryption: Decrypted contentdb_v.sqlite using PBKDF2 sha512 (256,000 iterations), populated language ID 5 metadata for all 12 sections and 276 discourses, and re-encrypted with SQLCipher v4 for native JNI libsqliteX.so access.
+- UI Localization Engine: Translated and integrated a complete 339-key Hindi Devnagari UI dictionary (uiTexts) covering navigation drawers, settings, and reader screens.
+- Dynamic Language-Aware Audio Routing: Patched Player.smali and ReaderActivity.smali to dynamically route audio fetching based on active reader language: routing Hindi discourses to high-fidelity CDN audio tracks and Gujarati discourses to official BAPS servers.
+- Android 13/14 SystemUI Crash Resolution: Resolved BadForegroundServiceNotificationException by re-architecting notification layouts and deploying missing media control drawables from tablet splits (drawable-sw600dp) to universal density buckets.
+- Modern 64-bit ARM Support: Extracted and aligned native arm64-v8a binaries (libsqliteX.so, libbaps-lib.so) ensuring smooth performance without CPU architecture mismatches.',
+  'Successfully built, aligned, debug-signed, and validated Vachanamrut_Study_Hindi_Final.apk on a physical Moto G52 (Android 13/14):
+- 100% native Hindi reading across all 12 sections and 276 spiritual discourses.
+- Zero crashes across cold boot, theme switching, and background foreground audio playback.
+- Dual-stream audio engine seamlessly playing authentic Hindi audio (e.g. 04:37) and Gujarati audio (04:22).
+- Published v1.0 release on GitHub with direct APK download.',
+  '[{"label":"Language Support","before":"Gujarati & English only","after":"Complete Hindi Edition","unit":"(276 discourses)","is_headline":true},{"label":"UI Localization","before":"0 Hindi keys","after":"339 Keys","unit":"100% Devnagari","is_headline":false},{"label":"Android 13/14 Stability","before":"Fatal notification crash","after":"0 Crashes","unit":"SystemUI fix","is_headline":false},{"label":"Audio Routing","before":"Hardcoded Gujarati CDN","after":"Dual-Language Engine","unit":"Hindi + Gujarati","is_headline":false}]',
+  '[{"label":"Download APK (v1.0)","url":"https://github.com/kmannnish/vachanamrut-study-hindi/releases/download/v1.0/Vachanamrut_Study_Hindi_Final.apk","kind":"download"},{"label":"GitHub Release & Source","url":"https://github.com/kmannnish/vachanamrut-study-hindi.git","kind":"github"}]'
+);
+
+-- Project 3: Featured project (Padharo House)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order, accent_color,
@@ -274,7 +354,7 @@ Padharo House is an exclusive boutique homestay nestled directly opposite the Am
   'published',
   true,
   true,
-  1,
+  2,
   '#A8321C',
   'Traditional boutique homestays in heritage corridors often rely entirely on high-commission aggregators (18% to 25% take rates) with zero direct branding, disconnected guest communication, and manual spreadsheet reconciliation.
 
@@ -293,7 +373,7 @@ Inquiries arriving through Instagram and phone calls frequently led to calendar 
   '[{"label":"Live Website","url":"https://padharohouse.in","kind":"live"},{"label":"Host Console","url":"https://padharohouse.in/admin","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/kmannnish/padharohouse","kind":"code"}]'
 );
 
--- Project 3: Featured project (FIRE Dashboard)
+-- Project 4: Featured project (FIRE Dashboard)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order, accent_color,
@@ -343,7 +423,7 @@ An interactive accordion system synthesized from masterclass personal finance te
   'published',
   true,
   false,
-  2,
+  3,
   '#2563EB',
   'Traditional personal finance calculators oversimplify retirement into a single, static corpus number without accounting for Indian asset classes (Sovereign Gold Bonds, Senior Citizen FDs, Index Funds), dynamic compounding ROI, or how money is actually safely drawn down post-retirement.
 
@@ -363,7 +443,7 @@ Users are often left overwhelmed by financial jargon, speculative stock tips, an
   '[{"label":"Live Dashboard","url":"https://fire-personal.netlify.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/kmannnish/FIRE-Dashboard.git","kind":"github"}]'
 );
 
--- Project 4: Engineering project (show_in_design_section = false)
+-- Project 5: Engineering project (show_in_design_section = false)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -379,7 +459,7 @@ insert into projects (
   'published',
   true,
   false,
-  3,
+  4,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -387,7 +467,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/logistics-agent","kind":"code"}]'
 );
 
--- Project 5: Engineering + design (show_in_design_section = true)
+-- Project 6: Engineering + design (show_in_design_section = true)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -403,7 +483,7 @@ insert into projects (
   'published',
   true,
   true,
-  4,
+  5,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -411,7 +491,7 @@ insert into projects (
   '[{"label":"Live tool","url":"https://example.com/mockup","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/mockup-gen","kind":"code"}]'
 );
 
--- Project 6: Engineering project
+-- Project 7: Engineering project
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -427,7 +507,7 @@ insert into projects (
   'published',
   false,
   false,
-  5,
+  6,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -435,7 +515,7 @@ insert into projects (
   '[{"label":"Live product","url":"https://example.com","kind":"live"},{"label":"GitHub","url":"https://github.com/manishk/content-pipeline","kind":"code"}]'
 );
 
--- Project 7: Engineering + design
+-- Project 8: Engineering + design
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order,
@@ -451,7 +531,7 @@ insert into projects (
   'published',
   false,
   true,
-  6,
+  7,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',
@@ -468,6 +548,13 @@ select p.id, t.id
 from projects p, tech t
 where p.slug = 'baps-jaipur-mds'
   and t.slug in ('react','tailwindcss','firebase','firestore','nodejs','vite','git');
+
+-- Featured Project: BAPS Vachanamrut Study Hindi
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'vachanamrut-study-hindi'
+  and t.slug in ('android','java','kotlin','sqlcipher','sqlite','reverse-engineering','git');
 
 -- Featured Project: Padharo House
 insert into project_tech (project_id, tech_id)

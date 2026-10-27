@@ -86,6 +86,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     : []
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const coverItem = project.media?.find((m) => m.role === 'cover') || project.media?.[0]
+  const coverUrl = coverItem?.media
+    ? coverItem.media.path.startsWith('http')
+      ? coverItem.media.path
+      : `${supabaseUrl}/storage/v1/object/public/${coverItem.media.bucket}/${coverItem.media.path}`
+    : null
 
   return (
     <article
@@ -107,7 +113,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       {/* Project Header */}
-      <header className="mb-14 border-b border-rule pb-10">
+      <header className="mb-12 border-b border-rule pb-10">
         <h1 className="text-h2 font-medium tracking-tight text-ink mb-4 max-w-prose">
           {project.title}
         </h1>
@@ -155,6 +161,29 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </div>
         )}
       </header>
+
+      {/* Primary Hero Screenshot Showcase */}
+      {coverItem && coverUrl && (
+        <div className="mb-14 rounded-xs border border-rule/80 overflow-hidden bg-rule/20 shadow-xs">
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full max-h-[580px] overflow-hidden flex items-center justify-center bg-ink/5">
+            <Image
+              src={coverUrl}
+              alt={coverItem.media.alt_text || project.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="object-contain object-center"
+              placeholder={coverItem.media.placeholder ? 'blur' : 'empty'}
+              blurDataURL={coverItem.media.placeholder || undefined}
+            />
+          </div>
+          {coverItem.media.caption && (
+            <div className="px-4 py-3 border-t border-rule/60 bg-paper/80 text-xs text-graphite font-display">
+              {coverItem.media.caption}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Case Study Core: Problem → Approach → Outcome */}
       <div className="max-w-prose space-y-12">

@@ -8,6 +8,7 @@ export type MediaRow = Database['public']['Tables']['media']['Row']
 
 export interface ProjectWithTech extends ProjectRow {
   tech: TechRow[]
+  cover?: MediaRow | null
   headlineMetric?: {
     label: string
     before?: string
@@ -32,11 +33,12 @@ export const getPublishedProjects = cache(async (): Promise<ProjectWithTech[]> =
   try {
     const supabase = await createClient()
 
-    // Query projects with related tech
+    // Query projects with related tech and cover media
     const { data, error } = await supabase
       .from('projects')
       .select(`
         *,
+        cover:media!projects_cover_media_id_fkey (*),
         project_tech (
           tech (*)
         )
@@ -61,6 +63,7 @@ export const getPublishedProjects = cache(async (): Promise<ProjectWithTech[]> =
       return {
         ...row,
         tech: techList,
+        cover: row.cover || null,
         headlineMetric,
       }
     })
