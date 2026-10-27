@@ -149,7 +149,9 @@ insert into tech (name, slug, category, proficiency, is_featured, sort_order) va
   ('AppSheet',        'appsheet',         'framework',  5, true, 35),
   ('Gmail API',       'gmail-api',        'infra',      5, true, 36),
   ('ERP Architecture','erp-architecture', 'tooling',    5, true, 37),
-  ('Excel',           'excel',            'tooling',    5, false,38);
+  ('Excel',           'excel',            'tooling',    5, false,38),
+  ('Express',         'express',          'framework',  5, true, 39),
+  ('Socket.io',       'socketio',         'infra',      5, true, 40);
 
 -- ── experience ───────────────────────────────────────────────────────────────
 -- Overlapping start dates so the trace chart has something to render.
@@ -259,7 +261,91 @@ Key outcomes:
   '[{"label":"Live Portal","url":"https://sampark-mds.vercel.app","kind":"live"},{"label":"GitHub Repository","url":"https://github.com/bapsjaipur/sampark-mds","kind":"github"}]'
 );
 
--- Project 2: Featured project (BAPS Vachanamrut Study Hindi)
+-- Project 2: Featured project (BAPS Jaipur Utara HMS)
+insert into projects (
+  slug, title, summary, body, role, started_on, ended_on,
+  status, is_featured, show_in_design_section, sort_order, accent_color,
+  problem, approach, outcome, metrics, links
+) values (
+  'baps-jaipur-utara-hms',
+  'BAPS Jaipur Utara — Hospitality & Accommodation Management System',
+  'A resilient, zero-cloud-cost guest accommodation management platform engineered for BAPS Jaipur Utara. Runs entirely on local reception hardware and private Wi-Fi, featuring real-time floor boards, QR-based contactless ID capture, Swami Ji approval workflows, and tiered billing (FOC/Discount/Paid).',
+  '## Background & Purpose
+The guest accommodation facilities at **BAPS Swaminarayan Sanstha, Jaipur Utara** host hundreds of visiting devotees, traveling saints (Sants), volunteers, and families attending sacred festivals and weekend spiritual assemblies (Satsang Sabha).
+
+Historically, room allocations, check-ins, and payments were tracked across manual physical paper ledgers. This resulted in frequent room scheduling clashes, lost keys, and friction in verifying booking permissions with Mandir leadership.
+
+The leadership instituted a strict requirement: **zero ongoing monthly subscription costs**. This eliminated typical cloud-hosted SaaS tools and necessitated a bespoke, high-reliability system engineered specifically for on-premise hardware.
+
+---
+
+## Architectural Pillars & Engineering Innovations
+
+### 1. Zero-Cloud-Cost Local Network Architecture
+Rather than paying monthly fees for managed cloud databases and hosting services, the entire system is containerized using **Docker Compose**:
+- **Backend:** Node.js + Express API server running on the physical front-desk Reception PC.
+- **Database:** Dedicated PostgreSQL engine with isolated volume persistence and automatic daily cron backups to local storage.
+- **Local Network Routing:** Binds to `0.0.0.0`, enabling any authorized smartphone (Swami Ji''s phone) or laptop connected to the temple''s private Wi-Fi network to access the web application with zero software installation.
+
+### 2. Live Building Floor Board
+The Reception interface departs from generic SaaS tables, modeling the physical reality of the building:
+- **Directory Layout:** Rooms are rendered as labeled architectural slots organized by floor (Ground Floor & First Floor).
+- **High-Contrast Status Palette:**
+  - **Sage Green (`#4A6D5C`):** Room is clean, inspected, and ready for immediate key assignment.
+  - **Brick Red (`#8C3B3B`):** Room is occupied. Shows guest name, party size, and scheduled checkout timestamp.
+  - **Overstay Alarm:** Real-time pulse animation alerting receptionists if a guest has exceeded the 11:00 AM checkout threshold.
+  - **Luggage Cloakroom Tracker:** Integrated cloakroom token management (`L-101`, `L-102`) for devotees storing luggage before evening trains.
+
+### 3. Dedicated Swami Ji Approval & 3-Tier Billing Console
+In a spiritual institution, guest hospitality balances commercial sustainability with traditional monastic seva:
+- **Pujya Swami Ji''s Approval Dashboard:** Dedicated touch-friendly interface for reviewing devotee reservation requests submitted through the public portal.
+- **3-Tier Billing Allocation:**
+  - **FOC (Free of Charge):** Granted to visiting Sants, dedicated regional volunteers, and mandir sevaks.
+  - **Discounted:** Configurable percentage concession for specific pilgrim groups.
+  - **Standard Paid:** Calculated based on room category (AC Room ₹1,500/night, Non-AC ₹900/night, Dormitory ₹400/night) with optional GST toggles.
+- **Instant WhatsApp Integration:** One-click confirmation dispatch generating pre-formatted WhatsApp messages with booking codes, room numbers, and check-in instructions.
+
+### 4. Contactless QR-to-Local ID Capture Flow
+Devised a novel, privacy-centric alternative to cloud document uploads:
+1. Receptionist clicks "Scan ID" on their terminal, generating a session-specific dynamic QR code on screen.
+2. The guest scans the QR code using their own smartphone camera, opening a lightweight local mobile web view (`/upload-id/:sessionId`).
+3. The guest photographs their government ID card (Aadhaar / Voter ID).
+4. The photo streams instantly over local **Socket.io** web sockets straight to the Reception PC disk (`backend/uploads/id-photos/`), verified on the front-desk monitor with zero data leaving the physical premises.
+
+### 5. Multi-Room Junctions & Concurrency Safety
+Devotee families often require 2 or more adjoining rooms under a single reservation:
+- Engineered a relational junction table (`booking_rooms`) with strict `UNIQUE(room_id)` database constraints, preventing race conditions or double-room allocation across simultaneous desk sessions.
+- Capacity-based vacancy calculation dynamically verifies aggregate availability over overlapping reservation periods.',
+  'Lead Full-Stack Engineer & System Architect',
+  '2024-07-01',
+  '2024-10-15',
+  'published',
+  true,
+  false,
+  1,
+  '#8C3B3B',
+  'Guest accommodation at BAPS Jaipur Utara mandir was previously managed using handwritten physical paper registers and uncoordinated phone messages. This created critical operational challenges:
+- Double Bookings & Overstays: Receptionists had no real-time visibility into room readiness, leading to rooms being double-allocated or guests overstaying without notification.
+- Zero-Cloud-Budget Mandate: The organization mandated an absolute ₹0/month ongoing operational budget. Traditional cloud hospitality SaaS platforms (requiring monthly recurring fees per room) were strictly ruled out.
+- Uncoordinated Approvals: Room allocation required authoritative blessings/approvals from Pujya Swami Ji. Front-desk staff constantly had to leave their posts or make repeated phone calls to resolve room tiers and approvals.
+- Privacy & Identity Regulations: Collecting physical photocopies of government IDs created paper clutter, compliance risks, and slow front-desk queues.',
+  'Architected and developed a full-stack, air-gapped hospitality management engine built to run natively on the Reception PC with zero external hosting dependencies:
+- Zero-Monthly-Cost On-Premise Architecture: Containerized Node.js, Express, and PostgreSQL with Docker Compose. The system binds to the local Wi-Fi network, allowing Swami Ji''s mobile phone and administrators'' laptops to securely connect via local browser sessions without any internet reliance.
+- Live Architectural Floor Board: Designed an intuitive visual room board reading like a physical building directory. Categorizes rooms across Ground and First Floors with immediate color-coded states (Sage Green for Ready, Brick Red for Occupied, Gray for Maintenance) and automated checkout countdown timers.
+- Authoritative Swami Ji Approval Queue: Dedicated portal for Swami Ji featuring one-tap booking reviews, FOC (Free of Charge for Sant/Sevak guests), Discount, or Full Paid tier assignment, and instant room allocation with automated WhatsApp confirmation messages.
+- Contactless QR-to-Local ID Capture: Devised an innovative QR code workflow: front-desk displays a dynamic QR code on screen; guest scans with their smartphone camera and uploads their ID; the image streams directly through local Socket.io to the PC''s hard drive without touching any third-party cloud.
+- Walk-In Concurrency & Phone Approval: Receptionists can log emergency walk-in devotees in seconds, record verbal phone authorizations from Swami Ji, and issue physical keys instantly.
+- Multi-Room Junction & Automated Backups: Database engine handles multi-room group reservations via junction tables (booking_rooms) with strict capacity bounds, luggage token tracking, and scheduled automated local database snapshots.',
+  'The system transformed front-desk hospitality at BAPS Jaipur Utara into a peaceful, lightning-fast digital workflow:
+- 100% elimination of double-bookings and room allocation errors.
+- Maintained strict ₹0/month ongoing cloud expenses by leveraging local network containerization.
+- Reduced guest check-in and key handover turnaround time from 8 minutes down to under 15 seconds.
+- Streamlined guest identity verification with zero paper waste through local Socket.io camera streaming.',
+  '[{"label":"Monthly Cloud Cost","before":"Cloud PaaS dependencies","after":"₹0 / Month","unit":"100% On-Premise","is_headline":true},{"label":"Check-in Turnaround","before":"8 min paper register","after":"<15 Seconds","unit":"Digital Floor Board","is_headline":false},{"label":"Billing Flexibility","before":"Rigid manual tracking","after":"3-Tier Engine","unit":"FOC / Discount / Paid","is_headline":false},{"label":"ID Collection","before":"Physical photocopies","after":"Contactless QR Flow","unit":"Zero Cloud Footprint","is_headline":false}]',
+  '[{"label":"GitHub Repository","url":"https://github.com/kmannnish/baps-hms.git","kind":"github"}]'
+);
+
+-- Project 3: Featured project (BAPS Vachanamrut Study Hindi)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order, accent_color,
@@ -313,7 +399,7 @@ The original audio player hardcoded remote audio retrieval to Gujarati-only endp
   'published',
   true,
   false,
-  1,
+  2,
   '#EA580C',
   'The official BAPS Vachanamrut Study Android app (org.baps.vachanamrut) lacked native Hindi support for millions of Hindi-speaking devotees and researchers worldwide. While the scriptures existed in print, the digital mobile application was strictly restricted to Gujarati and English.
 
@@ -401,7 +487,7 @@ On April 1st at 1:00 AM, the script:
   'published',
   true,
   false,
-  2,
+  3,
   '#3C3489',
   'UV Overseas, an international trading and manufacturing export house, faced severe operational bottlenecks as order volume scaled:
 - Fragmented Spreadsheets & Overwrite Collisions: Multiple CRM executives, sales managers, and logistics coordinators simultaneously edited the same Google Sheets, causing frequent cell overwrite conflicts, race conditions, and corrupted order rows.
@@ -424,7 +510,7 @@ On April 1st at 1:00 AM, the script:
   '[{"label":"System Proposal & Docs","url":"https://github.com/kmannnish","kind":"github"}]'
 );
 
--- Project 4: Featured project (Padharo House)
+-- Project 5: Featured project (Padharo House)
 insert into projects (
   slug, title, summary, body, role, started_on, ended_on,
   status, is_featured, show_in_design_section, sort_order, accent_color,
@@ -451,7 +537,7 @@ Padharo House is an exclusive boutique homestay nestled directly opposite the Am
   'published',
   true,
   true,
-  3,
+  4,
   '#A8321C',
   'Traditional boutique homestays in heritage corridors often rely entirely on high-commission aggregators (18% to 25% take rates) with zero direct branding, disconnected guest communication, and manual spreadsheet reconciliation.
 
@@ -520,7 +606,7 @@ An interactive accordion system synthesized from masterclass personal finance te
   'published',
   true,
   false,
-  4,
+  5,
   '#2563EB',
   'Traditional personal finance calculators oversimplify retirement into a single, static corpus number without accounting for Indian asset classes (Sovereign Gold Bonds, Senior Citizen FDs, Index Funds), dynamic compounding ROI, or how money is actually safely drawn down post-retirement.
 
@@ -556,7 +642,7 @@ insert into projects (
   'published',
   true,
   false,
-  5,
+  6,
   'Logistics teams spent 3+ hours each morning manually compiling shipment reports from scattered spreadsheets.',
   'A Python agent reads incoming CSV data, reasons over it using the OpenAI function-calling API, and produces a structured daily report — no human in the loop.',
   'The tool now runs autonomously every morning, delivering a formatted report to the team at 7am. Manual effort dropped from 3 hours to under 20 minutes of review.',
@@ -580,7 +666,7 @@ insert into projects (
   'published',
   true,
   true,
-  6,
+  7,
   'Small retailers needed product-on-mockup images but had no budget for a photographer and no time for Photoshop.',
   'A client-side web tool using Canvas API for compositing, with a library of original mockup templates designed specifically for this use case.',
   'Retailers generate mockup images in under 60 seconds. Average time to produce a launch-ready product photo dropped from 2 days to under 5 minutes.',
@@ -604,7 +690,7 @@ insert into projects (
   'published',
   false,
   false,
-  7,
+  8,
   'A single team member spent 4+ hours per week manually entering and formatting product data from supplier spreadsheets into the CMS.',
   'A scheduled pipeline that pulls raw supplier data, uses an LLM to generate enriched product descriptions, validates against a defined schema, and publishes to the CMS via its API.',
   'Publishing time dropped from 4 hours per week to 8 minutes. The team member now reviews and approves rather than typing — and the pipeline handles the weekly supplier updates automatically.',
@@ -628,7 +714,7 @@ insert into projects (
   'published',
   false,
   true,
-  8,
+  9,
   'Event designs were being created from scratch for each project, taking 2–3 days and producing inconsistent results across the team.',
   'A modular design system in Illustrator: component-based stage modules that can be combined, recoloured, and adapted to any venue in hours.',
   'Design production time dropped from 2–3 days to under 4 hours. The system was used for 15+ events in the first year.',
@@ -645,6 +731,13 @@ select p.id, t.id
 from projects p, tech t
 where p.slug = 'baps-jaipur-mds'
   and t.slug in ('react','tailwindcss','firebase','firestore','nodejs','vite','git');
+
+-- Featured Project: BAPS Jaipur Utara HMS
+insert into project_tech (project_id, tech_id)
+select p.id, t.id
+from projects p, tech t
+where p.slug = 'baps-jaipur-utara-hms'
+  and t.slug in ('react','nodejs','express','postgresql','docker','socketio','tailwindcss','git');
 
 -- Featured Project: BAPS Vachanamrut Study Hindi
 insert into project_tech (project_id, tech_id)
